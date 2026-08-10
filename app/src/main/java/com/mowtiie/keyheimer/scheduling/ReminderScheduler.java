@@ -12,7 +12,7 @@ public final class ReminderScheduler {
     static final String EXTRA_SECRET_ID = "secret_id";
 
     private ReminderScheduler() {
-    }
+        }
 
     public static void scheduleReminder(Context context, Secret secret) {
         AlarmManager alarmManager = context.getSystemService(AlarmManager.class);
