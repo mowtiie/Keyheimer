@@ -8,13 +8,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        EdgeToEdge.enable(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -56,8 +56,7 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
         adapter = new SecretAdapter(this);
         binding.recyclerSecrets.setAdapter(adapter);
 
-        binding.fabAddSecret.setOnClickListener(v ->
-                startActivity(new Intent(this, AddEditSecretActivity.class)));
+        binding.fabAddSecret.setOnClickListener(v -> startActivity(new Intent(this, AddEditSecretActivity.class)));
 
         setUpEdgeToEdgeInsets();
         requestNotificationPermissionIfNeeded();
@@ -79,16 +78,15 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
     }
 
     private void showVerifySheet(String secretId) {
-        VerifySecretBottomSheet.newInstance(secretId)
-                .show(getSupportFragmentManager(), "verify_secret");
+        VerifySecretBottomSheet.newInstance(secretId).show(getSupportFragmentManager(), "verify_secret");
     }
 
     private void requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             return;
         }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
         }
     }
@@ -105,8 +103,7 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
 
             binding.recyclerSecrets.setPadding(bars.left, 0, bars.right, listBasePadding + bars.bottom);
 
-            ViewGroup.MarginLayoutParams fabParams =
-                    (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+            ViewGroup.MarginLayoutParams fabParams = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
             fabParams.leftMargin = fabBaseMargin + bars.left;
             fabParams.rightMargin = fabBaseMargin + bars.right;
             fabParams.bottomMargin = fabBaseMargin + bars.bottom;

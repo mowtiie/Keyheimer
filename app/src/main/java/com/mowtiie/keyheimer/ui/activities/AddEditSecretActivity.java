@@ -4,14 +4,13 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -44,7 +43,7 @@ public class AddEditSecretActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        EdgeToEdge.enable(this);
         binding = ActivityAddEditSecretBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -68,9 +67,7 @@ public class AddEditSecretActivity extends AppCompatActivity {
     }
 
     private void setUpIntervalUnitDropdown() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_dropdown_item_1line,
-                getResources().getStringArray(R.array.interval_units));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.interval_units));
         binding.inputIntervalUnit.setAdapter(adapter);
     }
 
@@ -99,9 +96,7 @@ public class AddEditSecretActivity extends AppCompatActivity {
         binding.inputName.setText(secret.getName());
         binding.inputHint.setText(secret.getHint());
         binding.inputIntervalValue.setText(String.valueOf(secret.getIntervalValue()));
-        binding.inputIntervalUnit.setText(
-                getResources().getStringArray(R.array.interval_units)[indexOfUnit(secret.getIntervalUnit())],
-                false);
+        binding.inputIntervalUnit.setText(getResources().getStringArray(R.array.interval_units)[indexOfUnit(secret.getIntervalUnit())], false);
         binding.switchActive.setChecked(secret.isActive());
         binding.tilPassphrase.setHelperText(getString(R.string.helper_passphrase_edit));
         invalidateOptionsMenu();
@@ -140,6 +135,7 @@ public class AddEditSecretActivity extends AppCompatActivity {
             binding.tilIntervalValue.setError(getString(R.string.error_interval_value_required));
             return;
         }
+
         binding.tilIntervalValue.setError(null);
 
         char[] passphrase = charsOf(binding.inputPassphrase.getText());
@@ -150,10 +146,12 @@ public class AddEditSecretActivity extends AppCompatActivity {
             binding.tilPassphrase.setError(getString(R.string.error_passphrase_required));
             return;
         }
+
         if (changingPassphrase && !Arrays.equals(passphrase, confirmPassphrase)) {
             binding.tilConfirmPassphrase.setError(getString(R.string.error_passphrase_mismatch));
             return;
         }
+
         binding.tilPassphrase.setError(null);
         binding.tilConfirmPassphrase.setError(null);
 
@@ -177,6 +175,7 @@ public class AddEditSecretActivity extends AppCompatActivity {
             secret.setIterations(iterations);
             secret.setHash(HashUtil.hash(passphrase, salt, iterations));
         }
+
         Arrays.fill(passphrase, '\0');
         Arrays.fill(confirmPassphrase, '\0');
 
