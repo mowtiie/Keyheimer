@@ -10,14 +10,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
+import com.mowtiie.keyheimer.databinding.ActivityMainBinding;
 import com.mowtiie.keyheimer.ui.adapters.SecretAdapter;
 import com.mowtiie.keyheimer.util.AppExecutors;
 
@@ -25,45 +23,39 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SecretAdapter.Listener {
 
+    private ActivityMainBinding binding;
     private SecretDao dao;
     private SecretAdapter adapter;
-    private View emptyStateContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbar);
 
         dao = new SecretDao(this);
-        emptyStateContainer = findViewById(R.id.empty_state_container);
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_secrets);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerSecrets.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SecretAdapter(this);
-        recyclerView.setAdapter(adapter);
+        binding.recyclerSecrets.setAdapter(adapter);
 
-        FloatingActionButton fab = findViewById(R.id.fab_add_secret);
-
-        setUpEdgeToEdgeInsets(recyclerView, fab);
+        setUpEdgeToEdgeInsets();
     }
 
-    private void setUpEdgeToEdgeInsets(RecyclerView recyclerView, FloatingActionButton fab) {
-        View rootView = findViewById(R.id.main_root);
-        AppBarLayout appBarLayout = findViewById(R.id.app_bar_layout);
-
+    private void setUpEdgeToEdgeInsets() {
         int listBasePadding = getResources().getDimensionPixelSize(R.dimen.list_bottom_padding);
         int fabBaseMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
+        FloatingActionButton fab = binding.fabAddSecret;
 
-        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot, (v, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
 
-            appBarLayout.setPadding(bars.left, bars.top, bars.right, 0);
+            binding.appBarLayout.setPadding(bars.left, bars.top, bars.right, 0);
 
-            recyclerView.setPadding(bars.left, 0, bars.right, listBasePadding + bars.bottom);
+            binding.recyclerSecrets.setPadding(bars.left, 0, bars.right, listBasePadding + bars.bottom);
 
             ViewGroup.MarginLayoutParams fabParams =
                     (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
@@ -87,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
             List<Secret> secrets = dao.getAll();
             AppExecutors.getInstance().mainThread(() -> {
                 adapter.submitList(secrets);
-                emptyStateContainer.setVisibility(secrets.isEmpty() ? View.VISIBLE : View.GONE);
+                binding.emptyStateContainer.setVisibility(secrets.isEmpty() ? View.VISIBLE : View.GONE);
             });
         });
     }
