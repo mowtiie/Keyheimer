@@ -9,6 +9,7 @@ import android.content.Intent;
 import androidx.core.app.NotificationCompat;
 
 import com.mowtiie.keyheimer.data.Secret;
+import com.mowtiie.keyheimer.ui.activities.MainActivity;
 
 final class NotificationHelper {
 
@@ -20,10 +21,9 @@ final class NotificationHelper {
     static void showReminder(Context context, Secret secret) {
         ensureChannel(context);
 
-        Intent verifyIntent = new Intent(Intent.ACTION_VIEW);
-        verifyIntent.setClassName(context, "com.keyheimer.ui.VerifyActivity");
-        verifyIntent.putExtra("secret_id", secret.getId());
-        verifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent verifyIntent = new Intent(context, MainActivity.class);
+        verifyIntent.putExtra(MainActivity.EXTRA_VERIFY_SECRET_ID, secret.getId());
+        verifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context,
