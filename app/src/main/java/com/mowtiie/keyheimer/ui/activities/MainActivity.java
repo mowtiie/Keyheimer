@@ -24,11 +24,14 @@ import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
 import com.mowtiie.keyheimer.databinding.ActivityMainBinding;
 import com.mowtiie.keyheimer.ui.adapters.SecretAdapter;
+import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
 import com.mowtiie.keyheimer.util.AppExecutors;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SecretAdapter.Listener {
+
+    public static final String EXTRA_VERIFY_SECRET_ID = "verify_secret_id";
 
     private ActivityMainBinding binding;
     private SecretDao dao;
@@ -53,17 +56,39 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
         adapter = new SecretAdapter(this);
         binding.recyclerSecrets.setAdapter(adapter);
 
-        binding.fabAddSecret.setOnClickListener(v -> startActivity(new Intent(this, AddEditSecretActivity.class)));
+        binding.fabAddSecret.setOnClickListener(v ->
+                startActivity(new Intent(this, AddEditSecretActivity.class)));
 
         setUpEdgeToEdgeInsets();
         requestNotificationPermissionIfNeeded();
+        handleVerifyIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleVerifyIntent(intent);
+    }
+
+    private void handleVerifyIntent(Intent intent) {
+        String secretId = intent.getStringExtra(EXTRA_VERIFY_SECRET_ID);
+        if (secretId != null) {
+            showVerifySheet(secretId);
+        }
+    }
+
+    private void showVerifySheet(String secretId) {
+        VerifySecretBottomSheet.newInstance(secretId)
+                .show(getSupportFragmentManager(), "verify_secret");
     }
 
     private void requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             return;
         }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
         }
     }
@@ -116,5 +141,6 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
 
     @Override
     public void onVerifyNowClicked(Secret secret) {
+        showVerifySheet(secret.getId());
     }
 }
