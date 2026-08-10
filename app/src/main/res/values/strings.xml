@@ -47,7 +47,7 @@
     <string name="verify_reset_button">Reset / re-sync passphrase</string>
 
     <string name="exact_alarm_permission_title">Allow exact reminders?</string>
-    <string name="exact_alarm_permission_message">Keyheimer uses exact alarms so reminders arrive on the day you picked, not \"sometime around then.\" Without this, Android may delay or batch reminders.</string>
+    <string name="exact_alarm_permission_message">Keyheimer uses exact alarms so reminders arrive on the day you picked, not \"sometime around then.\" You can allow it now, or continue with approximate timing — this can be changed later in Settings.</string>
     <string name="exact_alarm_permission_positive">Open settings</string>
-    <string name="exact_alarm_permission_negative">Not now</string>
+    <string name="exact_alarm_permission_negative">Use inexact reminders</string>
 </resources>
