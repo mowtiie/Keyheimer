@@ -1,10 +1,17 @@
 package com.mowtiie.keyheimer.ui.activities;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -27,6 +34,10 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
     private SecretDao dao;
     private SecretAdapter adapter;
 
+    private final ActivityResultLauncher<String> notificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +53,19 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
         adapter = new SecretAdapter(this);
         binding.recyclerSecrets.setAdapter(adapter);
 
+        binding.fabAddSecret.setOnClickListener(v -> startActivity(new Intent(this, AddEditSecretActivity.class)));
+
         setUpEdgeToEdgeInsets();
+        requestNotificationPermissionIfNeeded();
+    }
+
+    private void requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
     }
 
     private void setUpEdgeToEdgeInsets() {
@@ -86,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
 
     @Override
     public void onSecretClicked(Secret secret) {
+        Intent intent = new Intent(this, AddEditSecretActivity.class);
+        intent.putExtra(AddEditSecretActivity.EXTRA_SECRET_ID, secret.getId());
+        startActivity(intent);
     }
 
     @Override
