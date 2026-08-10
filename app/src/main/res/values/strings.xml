@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Keyheimer</string>
+    <string name="empty_state_message">No secrets yet. Tap + to add one.</string>
+    <string name="add_secret">Add secret</string>
+    <string name="verify_now">Verify now</string>
 </resources>
