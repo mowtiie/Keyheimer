@@ -5,4 +5,37 @@
     <string name="empty_state_message">No secrets yet. Tap + to add one.</string>
     <string name="add_secret">Add secret</string>
     <string name="verify_now">Verify now</string>
+
+    <string name="title_add_secret">Add secret</string>
+    <string name="title_edit_secret">Edit secret</string>
+
+    <string name="label_name">Secret name</string>
+    <string name="helper_name">e.g. Password manager master password</string>
+
+    <string name="label_passphrase">Passphrase</string>
+    <string name="helper_passphrase_add">What you\'d actually type to unlock it</string>
+    <string name="helper_passphrase_edit">Leave blank to keep the current passphrase</string>
+
+    <string name="label_confirm_passphrase">Confirm passphrase</string>
+    <string name="helper_confirm_passphrase">Re-enter to confirm</string>
+
+    <string name="label_hint">Hint (optional)</string>
+    <string name="helper_hint">Keep it vague — this is stored in plain text</string>
+
+    <string name="label_interval_value">Every</string>
+    <string name="label_interval_unit">Interval</string>
+    <string name="label_active">Reminders active</string>
+
+    <string name="error_name_required">Name is required</string>
+    <string name="error_passphrase_required">Passphrase is required</string>
+    <string name="error_passphrase_mismatch">Passphrases don\'t match</string>
+    <string name="error_interval_value_required">Enter a number greater than 0</string>
+
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+
+    <string name="delete_confirm_title">Delete this secret?</string>
+    <string name="delete_confirm_message">This can\'t be undone.</string>
+    <string name="delete_confirm_positive">Delete</string>
+    <string name="delete_confirm_negative">Cancel</string>
 </resources>
