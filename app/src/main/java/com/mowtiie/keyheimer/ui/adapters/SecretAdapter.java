@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretViewHolder> {
+public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretViewHolder> {
 
-    interface Listener {
+    public interface Listener {
         void onSecretClicked(Secret secret);
 
         void onVerifyNowClicked(Secret secret);
@@ -28,11 +28,11 @@ class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretViewHolder>
     private final Listener listener;
     private final List<Secret> secrets = new ArrayList<>();
 
-    SecretAdapter(Listener listener) {
+    public SecretAdapter(Listener listener) {
         this.listener = listener;
     }
 
-    void submitList(List<Secret> newSecrets) {
+    public void submitList(List<Secret> newSecrets) {
         secrets.clear();
         secrets.addAll(newSecrets);
         notifyDataSetChanged();
