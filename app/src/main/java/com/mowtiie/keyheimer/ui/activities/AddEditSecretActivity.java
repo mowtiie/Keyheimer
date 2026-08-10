@@ -1,6 +1,5 @@
 package com.mowtiie.keyheimer.ui.activities;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.Menu;
@@ -15,14 +14,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
+import com.mowtiie.keyheimer.databinding.ActivityAddEditSecretBinding;
 import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.HashUtil;
@@ -39,79 +36,49 @@ public class AddEditSecretActivity extends AppCompatActivity {
             Secret.IntervalUnit.DAY, Secret.IntervalUnit.WEEK, Secret.IntervalUnit.MONTH
     };
 
+    private ActivityAddEditSecretBinding binding;
     private SecretDao dao;
     private boolean editMode;
     private Secret existingSecret;
-
-    private TextInputLayout tilName;
-    private TextInputEditText inputName;
-    private TextInputLayout tilPassphrase;
-    private TextInputEditText inputPassphrase;
-    private TextInputLayout tilConfirmPassphrase;
-    private TextInputEditText inputConfirmPassphrase;
-    private TextInputEditText inputHint;
-    private TextInputLayout tilIntervalValue;
-    private TextInputEditText inputIntervalValue;
-    private AutoCompleteTextView inputIntervalUnit;
-    private MaterialSwitch switchActive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        setContentView(R.layout.activity_add_edit_secret);
+        binding = ActivityAddEditSecretBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         String secretId = getIntent().getStringExtra(EXTRA_SECRET_ID);
         editMode = secretId != null;
 
         dao = new SecretDao(this);
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(editMode ? R.string.title_edit_secret : R.string.title_add_secret);
-        toolbar.setNavigationOnClickListener(v -> finish());
-        setSupportActionBar(toolbar);
+        binding.toolbar.setTitle(editMode ? R.string.title_edit_secret : R.string.title_add_secret);
+        binding.toolbar.setNavigationOnClickListener(v -> finish());
+        setSupportActionBar(binding.toolbar);
 
-        bindViews();
         setUpIntervalUnitDropdown();
         setUpEdgeToEdgeInsets();
 
         if (editMode) {
             loadExistingSecret(secretId);
         } else {
-            inputIntervalUnit.setText(getResources().getStringArray(R.array.interval_units)[0], false);
+            binding.inputIntervalUnit.setText(getResources().getStringArray(R.array.interval_units)[0], false);
         }
-    }
-
-    private void bindViews() {
-        tilName = findViewById(R.id.til_name);
-        inputName = findViewById(R.id.input_name);
-        tilPassphrase = findViewById(R.id.til_passphrase);
-        inputPassphrase = findViewById(R.id.input_passphrase);
-        tilConfirmPassphrase = findViewById(R.id.til_confirm_passphrase);
-        inputConfirmPassphrase = findViewById(R.id.input_confirm_passphrase);
-        inputHint = findViewById(R.id.input_hint);
-        tilIntervalValue = findViewById(R.id.til_interval_value);
-        inputIntervalValue = findViewById(R.id.input_interval_value);
-        inputIntervalUnit = findViewById(R.id.input_interval_unit);
-        switchActive = findViewById(R.id.switch_active);
     }
 
     private void setUpIntervalUnitDropdown() {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_dropdown_item_1line,
                 getResources().getStringArray(R.array.interval_units));
-        inputIntervalUnit.setAdapter(adapter);
+        binding.inputIntervalUnit.setAdapter(adapter);
     }
 
     private void setUpEdgeToEdgeInsets() {
-        View rootView = findViewById(R.id.add_edit_root);
-        AppBarLayout appBarLayout = findViewById(R.id.app_bar_layout);
-        View scrollContent = findViewById(R.id.scroll_content);
-
-        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.addEditRoot, (v, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            appBarLayout.setPadding(bars.left, bars.top, bars.right, 0);
-            scrollContent.setPadding(0, 0, 0, bars.bottom);
+            binding.appBarLayout.setPadding(bars.left, bars.top, bars.right, 0);
+            binding.scrollContent.setPadding(0, 0, 0, bars.bottom);
             return windowInsets;
         });
     }
@@ -129,14 +96,14 @@ public class AddEditSecretActivity extends AppCompatActivity {
             return;
         }
         existingSecret = secret;
-        inputName.setText(secret.getName());
-        inputHint.setText(secret.getHint());
-        inputIntervalValue.setText(String.valueOf(secret.getIntervalValue()));
-        inputIntervalUnit.setText(
+        binding.inputName.setText(secret.getName());
+        binding.inputHint.setText(secret.getHint());
+        binding.inputIntervalValue.setText(String.valueOf(secret.getIntervalValue()));
+        binding.inputIntervalUnit.setText(
                 getResources().getStringArray(R.array.interval_units)[indexOfUnit(secret.getIntervalUnit())],
                 false);
-        switchActive.setChecked(secret.isActive());
-        tilPassphrase.setHelperText(getString(R.string.helper_passphrase_edit));
+        binding.switchActive.setChecked(secret.isActive());
+        binding.tilPassphrase.setHelperText(getString(R.string.helper_passphrase_edit));
         invalidateOptionsMenu();
     }
 
@@ -161,38 +128,38 @@ public class AddEditSecretActivity extends AppCompatActivity {
     }
 
     private void attemptSave() {
-        String name = textOf(inputName);
+        String name = textOf(binding.inputName);
         if (name.isEmpty()) {
-            tilName.setError(getString(R.string.error_name_required));
+            binding.tilName.setError(getString(R.string.error_name_required));
             return;
         }
-        tilName.setError(null);
+        binding.tilName.setError(null);
 
-        int intervalValue = parsePositiveInt(textOf(inputIntervalValue));
+        int intervalValue = parsePositiveInt(textOf(binding.inputIntervalValue));
         if (intervalValue <= 0) {
-            tilIntervalValue.setError(getString(R.string.error_interval_value_required));
+            binding.tilIntervalValue.setError(getString(R.string.error_interval_value_required));
             return;
         }
-        tilIntervalValue.setError(null);
+        binding.tilIntervalValue.setError(null);
 
-        char[] passphrase = charsOf(inputPassphrase.getText());
-        char[] confirmPassphrase = charsOf(inputConfirmPassphrase.getText());
+        char[] passphrase = charsOf(binding.inputPassphrase.getText());
+        char[] confirmPassphrase = charsOf(binding.inputConfirmPassphrase.getText());
         boolean changingPassphrase = passphrase.length > 0;
 
         if (!editMode && !changingPassphrase) {
-            tilPassphrase.setError(getString(R.string.error_passphrase_required));
+            binding.tilPassphrase.setError(getString(R.string.error_passphrase_required));
             return;
         }
         if (changingPassphrase && !Arrays.equals(passphrase, confirmPassphrase)) {
-            tilConfirmPassphrase.setError(getString(R.string.error_passphrase_mismatch));
+            binding.tilConfirmPassphrase.setError(getString(R.string.error_passphrase_mismatch));
             return;
         }
-        tilPassphrase.setError(null);
-        tilConfirmPassphrase.setError(null);
+        binding.tilPassphrase.setError(null);
+        binding.tilConfirmPassphrase.setError(null);
 
-        String hint = textOf(inputHint);
-        Secret.IntervalUnit intervalUnit = INTERVAL_UNITS[indexOfUnitLabel(textOf(inputIntervalUnit))];
-        boolean active = switchActive.isChecked();
+        String hint = textOf(binding.inputHint);
+        Secret.IntervalUnit intervalUnit = INTERVAL_UNITS[indexOfUnitLabel(textOf(binding.inputIntervalUnit))];
+        boolean active = binding.switchActive.isChecked();
 
         Secret secret = existingSecret != null ? existingSecret : new Secret();
         secret.setId(existingSecret != null ? existingSecret.getId() : UUID.randomUUID().toString());
@@ -235,7 +202,7 @@ public class AddEditSecretActivity extends AppCompatActivity {
     }
 
     private void confirmDelete() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.delete_confirm_title)
                 .setMessage(R.string.delete_confirm_message)
                 .setPositiveButton(R.string.delete_confirm_positive, (dialog, which) -> deleteSecret())
