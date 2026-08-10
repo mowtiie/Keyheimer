@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="interval_units">
+        <item>Day(s)</item>
+        <item>Week(s)</item>
+        <item>Month(s)</item>
+    </string-array>
+</resources>
