@@ -3,8 +3,10 @@ package com.mowtiie.keyheimer.ui.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,11 +20,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
 import com.mowtiie.keyheimer.databinding.ActivityMainBinding;
+import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.ui.adapters.SecretAdapter;
 import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
 import com.mowtiie.keyheimer.util.AppExecutors;
@@ -56,10 +60,12 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
         adapter = new SecretAdapter(this);
         binding.recyclerSecrets.setAdapter(adapter);
 
-        binding.fabAddSecret.setOnClickListener(v -> startActivity(new Intent(this, AddEditSecretActivity.class)));
+        binding.fabAddSecret.setOnClickListener(v ->
+                startActivity(new Intent(this, AddEditSecretActivity.class)));
 
         setUpEdgeToEdgeInsets();
         requestNotificationPermissionIfNeeded();
+        requestExactAlarmPermissionIfNeeded();
         handleVerifyIntent(getIntent());
     }
 
@@ -78,17 +84,34 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
     }
 
     private void showVerifySheet(String secretId) {
-        VerifySecretBottomSheet.newInstance(secretId).show(getSupportFragmentManager(), "verify_secret");
+        VerifySecretBottomSheet.newInstance(secretId)
+                .show(getSupportFragmentManager(), "verify_secret");
     }
 
     private void requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             return;
         }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
         }
+    }
+
+    private void requestExactAlarmPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || ReminderScheduler.canScheduleExactAlarms(this)) {
+            return;
+        }
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.exact_alarm_permission_title)
+                .setMessage(R.string.exact_alarm_permission_message)
+                .setPositiveButton(R.string.exact_alarm_permission_positive, (dialog, which) -> {
+                    Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+                })
+                .setNegativeButton(R.string.exact_alarm_permission_negative, null)
+                .show();
     }
 
     private void setUpEdgeToEdgeInsets() {
@@ -103,7 +126,8 @@ public class MainActivity extends AppCompatActivity implements SecretAdapter.Lis
 
             binding.recyclerSecrets.setPadding(bars.left, 0, bars.right, listBasePadding + bars.bottom);
 
-            ViewGroup.MarginLayoutParams fabParams = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+            ViewGroup.MarginLayoutParams fabParams =
+                    (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
             fabParams.leftMargin = fabBaseMargin + bars.left;
             fabParams.rightMargin = fabBaseMargin + bars.right;
             fabParams.bottomMargin = fabBaseMargin + bars.bottom;
