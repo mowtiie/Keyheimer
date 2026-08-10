@@ -1,16 +1,13 @@
 package com.mowtiie.keyheimer.ui.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textview.MaterialTextView;
-import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
+import com.mowtiie.keyheimer.databinding.ItemSecretBinding;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -41,8 +38,9 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
     @NonNull
     @Override
     public SecretViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_secret, parent, false);
-        return new SecretViewHolder(view);
+        ItemSecretBinding binding = ItemSecretBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new SecretViewHolder(binding);
     }
 
     @Override
@@ -57,29 +55,26 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
 
     static class SecretViewHolder extends RecyclerView.ViewHolder {
 
-        private final MaterialTextView nameText;
-        private final MaterialTextView subtitleText;
-        private final MaterialButton verifyButton;
+        private final ItemSecretBinding binding;
 
-        SecretViewHolder(@NonNull View itemView) {
-            super(itemView);
-            nameText = itemView.findViewById(R.id.text_secret_name);
-            subtitleText = itemView.findViewById(R.id.text_secret_subtitle);
-            verifyButton = itemView.findViewById(R.id.button_verify_now);
+        SecretViewHolder(@NonNull ItemSecretBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(Secret secret, Listener listener) {
-            nameText.setText(secret.getName());
-            subtitleText.setText(buildSubtitle(secret));
+            binding.textSecretName.setText(secret.getName());
+            binding.textSecretSubtitle.setText(buildSubtitle(secret));
             itemView.setOnClickListener(v -> listener.onSecretClicked(secret));
-            verifyButton.setOnClickListener(v -> listener.onVerifyNowClicked(secret));
+            binding.buttonVerifyNow.setOnClickListener(v -> listener.onVerifyNowClicked(secret));
         }
 
         private String buildSubtitle(Secret secret) {
-            String interval = secret.getIntervalValue() + " " + pluralize(secret.getIntervalUnit().name().toLowerCase(Locale.US), secret.getIntervalValue());
-            String nextDate = DateFormat.getDateInstance(DateFormat.MEDIUM).format(secret.getNextTriggerAt());
-            String status = secret.isActive() ? "Every " + interval + " • Next: " + nextDate : "Paused";
-            return status;
+            String interval = secret.getIntervalValue() + " " +
+                    pluralize(secret.getIntervalUnit().name().toLowerCase(Locale.US), secret.getIntervalValue());
+            String nextDate = DateFormat.getDateInstance(DateFormat.MEDIUM)
+                    .format(secret.getNextTriggerAt());
+            return secret.isActive() ? "Every " + interval + " • Next: " + nextDate : "Paused";
         }
 
         private String pluralize(String unit, int value) {
