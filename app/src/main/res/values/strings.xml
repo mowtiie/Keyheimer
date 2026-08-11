@@ -25,6 +25,8 @@
     <string name="label_interval_value">Every</string>
     <string name="label_interval_unit">Interval</string>
     <string name="label_active">Reminders active</string>
+    <string name="label_reminder_time">Reminder time</string>
+    <string name="reminder_time_picker_title">Set reminder time</string>
 
     <string name="error_name_required">Name is required</string>
     <string name="error_passphrase_required">Passphrase is required</string>
@@ -34,8 +36,8 @@
     <string name="action_save">Save</string>
     <string name="action_delete">Delete</string>
 
-    <string name="delete_confirm_title">Delete this secret?</string>
-    <string name="delete_confirm_message">This can\'t be undone.</string>
+    <string name="delete_confirm_title">Delete \u201c%1$s\u201d?</string>
+    <string name="delete_confirm_message">This can\'t be undone — you\'ll lose its reminder schedule and history.</string>
     <string name="delete_confirm_positive">Delete</string>
     <string name="delete_confirm_negative">Cancel</string>
 
@@ -54,4 +56,15 @@
     <string name="section_details">Details</string>
     <string name="section_passphrase">Passphrase</string>
     <string name="section_schedule">Reminder schedule</string>
+
+    <string name="action_search">Search</string>
+    <string name="search_hint">Search secrets</string>
+    <string name="search_empty_state">No secrets match your search.</string>
+    <string name="action_sort">Sort</string>
+    <string name="sort_name_asc">Name (A\u2013Z)</string>
+    <string name="sort_name_desc">Name (Z\u2013A)</string>
+    <string name="sort_updated_desc">Recently updated</string>
+    <string name="sort_updated_asc">Oldest updated</string>
+    <string name="sort_created_desc">Recently created</string>
+    <string name="sort_created_asc">Oldest created</string>
 </resources>
