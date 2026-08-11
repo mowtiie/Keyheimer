@@ -120,8 +120,7 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void onVerifySuccess() {
-        long nextTriggerAt = IntervalConverter.computeNextTriggerAt(
-                secret.getIntervalValue(), secret.getIntervalUnit());
+        long nextTriggerAt = IntervalConverter.computeNextTriggerAt(secret.getIntervalValue(), secret.getIntervalUnit(), secret.getReminderHour(), secret.getReminderMinute());
         String secretId = secret.getId();
 
         AppExecutors.getInstance().diskIO().execute(() -> {
