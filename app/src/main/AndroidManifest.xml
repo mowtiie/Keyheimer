@@ -16,13 +16,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Keyheimer">
         <activity
-            android:name=".ui.activities.AddEditSecretActivity"
+            android:name=".ui.activities.SettingsActivity"
             android:parentActivityName=".ui.activities.MainActivity"
-            android:exported="false" />
+            android:exported="false"/>
+        <activity
+            android:name=".ui.activities.AddEditSecretActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.MainActivity" />
         <activity
             android:name=".ui.activities.MainActivity"
-            android:launchMode="singleTop"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,11 +35,10 @@
         </activity>
 
         <receiver
-            android:name="com.mowtiie.keyheimer.scheduling.AlarmReceiver"
+            android:name=".scheduling.AlarmReceiver"
             android:exported="false" />
-
         <receiver
-            android:name="com.mowtiie.keyheimer.scheduling.BootReceiver"
+            android:name=".scheduling.BootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
