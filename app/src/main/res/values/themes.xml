@@ -47,4 +47,12 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
+
+    <style name="Theme.Keyheimer.MediumContrast" parent="ThemeOverlay.Keyheimer.MediumContrast">
+
+    </style>
+
+    <style name="Theme.Keyheimer.HighContrast" parent="ThemeOverlay.Keyheimer.HighContrast">
+
+    </style>
 </resources>
