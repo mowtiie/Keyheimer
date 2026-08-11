@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/action_search"
+        android:iconTint="?attr/colorOnSurfaceVariant"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom" />
+
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_sort"
+        android:iconTint="?attr/colorOnSurfaceVariant"
+        android:title="@string/action_sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <group
+                android:id="@+id/group_sort"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/sort_name_asc"
+                    android:title="@string/sort_name_asc" />
+                <item
+                    android:id="@+id/sort_name_desc"
+                    android:title="@string/sort_name_desc" />
+                <item
+                    android:id="@+id/sort_updated_desc"
+                    android:title="@string/sort_updated_desc" />
+                <item
+                    android:id="@+id/sort_updated_asc"
+                    android:title="@string/sort_updated_asc" />
+                <item
+                    android:id="@+id/sort_created_desc"
+                    android:title="@string/sort_created_desc" />
+                <item
+                    android:id="@+id/sort_created_asc"
+                    android:title="@string/sort_created_asc" />
+            </group>
+        </menu>
+    </item>
+
+</menu>
