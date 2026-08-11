@@ -2,7 +2,8 @@ package com.mowtiie.keyheimer.data;
 
 public final class SecretContract {
 
-    private SecretContract() { }
+    private SecretContract() {
+    }
 
     public static final String TABLE_NAME = "secrets";
 
@@ -19,6 +20,10 @@ public final class SecretContract {
     public static final String COLUMN_SUCCESS_COUNT = "success_count";
     public static final String COLUMN_FAIL_COUNT = "fail_count";
     public static final String COLUMN_IS_ACTIVE = "is_active";
+    public static final String COLUMN_CREATED_AT = "created_at";
+    public static final String COLUMN_UPDATED_AT = "updated_at";
+    public static final String COLUMN_REMINDER_HOUR = "reminder_hour";
+    public static final String COLUMN_REMINDER_MINUTE = "reminder_minute";
 
     public static final String CREATE_TABLE_SQL =
             "CREATE TABLE " + TABLE_NAME + " (" +
@@ -34,7 +39,11 @@ public final class SecretContract {
                     COLUMN_LAST_VERIFIED_AT + " INTEGER, " +
                     COLUMN_SUCCESS_COUNT + " INTEGER NOT NULL DEFAULT 0, " +
                     COLUMN_FAIL_COUNT + " INTEGER NOT NULL DEFAULT 0, " +
-                    COLUMN_IS_ACTIVE + " INTEGER NOT NULL DEFAULT 1" +
+                    COLUMN_IS_ACTIVE + " INTEGER NOT NULL DEFAULT 1, " +
+                    COLUMN_CREATED_AT + " INTEGER NOT NULL, " +
+                    COLUMN_UPDATED_AT + " INTEGER NOT NULL, " +
+                    COLUMN_REMINDER_HOUR + " INTEGER NOT NULL DEFAULT 9, " +
+                    COLUMN_REMINDER_MINUTE + " INTEGER NOT NULL DEFAULT 0" +
                     ");";
 
     public static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS " + TABLE_NAME;
