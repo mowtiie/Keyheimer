@@ -2,6 +2,7 @@ package com.mowtiie.keyheimer.ui.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
