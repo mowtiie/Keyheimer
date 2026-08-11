@@ -23,11 +23,11 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
-        long nextTriggerAt = IntervalConverter.computeNextTriggerAt(secret.getIntervalValue(), secret.getIntervalUnit());
+        long nextTriggerAt = IntervalConverter.computeNextTriggerAt(secret.getIntervalValue(), secret.getIntervalUnit(), secret.getReminderHour(), secret.getReminderMinute());
         secret.setNextTriggerAt(nextTriggerAt);
         dao.update(secret);
-        ReminderScheduler.scheduleReminder(context, secret);
 
+        ReminderScheduler.scheduleReminder(context, secret);
         NotificationHelper.showReminder(context, secret);
     }
 }
