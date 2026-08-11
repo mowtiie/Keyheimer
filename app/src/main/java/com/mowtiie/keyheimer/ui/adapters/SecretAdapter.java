@@ -70,11 +70,9 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
         }
 
         private String buildSubtitle(Secret secret) {
-            String interval = secret.getIntervalValue() + " " +
-                    pluralize(secret.getIntervalUnit().name().toLowerCase(Locale.US), secret.getIntervalValue());
-            String nextDate = DateFormat.getDateInstance(DateFormat.MEDIUM)
-                    .format(secret.getNextTriggerAt());
-            return secret.isActive() ? "Every " + interval + " • Next: " + nextDate : "Paused";
+            String interval = secret.getIntervalValue() + " " + pluralize(secret.getIntervalUnit().name().toLowerCase(Locale.US), secret.getIntervalValue());
+            String nextDateTime = DateFormat.getDateInstance(DateFormat.MEDIUM).format(secret.getNextTriggerAt()) + ", " + android.text.format.DateFormat.getTimeFormat(itemView.getContext()).format(secret.getNextTriggerAt());
+            return secret.isActive() ? "Every " + interval + " • Next: " + nextDateTime : "Paused";
         }
 
         private String pluralize(String unit, int value) {
