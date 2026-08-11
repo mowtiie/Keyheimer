@@ -1,7 +1,5 @@
 package com.mowtiie.keyheimer.data;
 
-import static com.mowtiie.keyheimer.data.SecretContract.*;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mowtiie.keyheimer.data.SecretContract.*;
 
 public class SecretDao {
 
@@ -19,11 +19,15 @@ public class SecretDao {
     }
 
     public void insert(Secret secret) {
+        long now = System.currentTimeMillis();
+        secret.setCreatedAt(now);
+        secret.setUpdatedAt(now);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.insert(TABLE_NAME, null, toContentValues(secret));
     }
 
     public void update(Secret secret) {
+        secret.setUpdatedAt(System.currentTimeMillis());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.update(
                 TABLE_NAME,
@@ -123,6 +127,10 @@ public class SecretDao {
         values.put(COLUMN_SUCCESS_COUNT, secret.getSuccessCount());
         values.put(COLUMN_FAIL_COUNT, secret.getFailCount());
         values.put(COLUMN_IS_ACTIVE, secret.isActive() ? 1 : 0);
+        values.put(COLUMN_CREATED_AT, secret.getCreatedAt());
+        values.put(COLUMN_UPDATED_AT, secret.getUpdatedAt());
+        values.put(COLUMN_REMINDER_HOUR, secret.getReminderHour());
+        values.put(COLUMN_REMINDER_MINUTE, secret.getReminderMinute());
         return values;
     }
 
@@ -135,7 +143,8 @@ public class SecretDao {
         secret.setIterations(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ITERATIONS)));
         secret.setHint(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_HINT)));
         secret.setIntervalValue(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_INTERVAL_VALUE)));
-        secret.setIntervalUnit(Secret.IntervalUnit.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INTERVAL_UNIT))));
+        secret.setIntervalUnit(Secret.IntervalUnit.valueOf(
+                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INTERVAL_UNIT))));
         secret.setNextTriggerAt(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NEXT_TRIGGER_AT)));
 
         int lastVerifiedIndex = cursor.getColumnIndexOrThrow(COLUMN_LAST_VERIFIED_AT);
@@ -144,6 +153,10 @@ public class SecretDao {
         secret.setSuccessCount(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SUCCESS_COUNT)));
         secret.setFailCount(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FAIL_COUNT)));
         secret.setActive(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_ACTIVE)) != 0);
+        secret.setCreatedAt(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT)));
+        secret.setUpdatedAt(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_UPDATED_AT)));
+        secret.setReminderHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_REMINDER_HOUR)));
+        secret.setReminderMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_REMINDER_MINUTE)));
         return secret;
     }
 }
