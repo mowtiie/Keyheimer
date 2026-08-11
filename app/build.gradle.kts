@@ -43,6 +43,7 @@ android {
 dependencies {
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
+    implementation(libs.biometric)
     implementation(libs.constraintlayout)
     implementation(libs.material)
     implementation(libs.preference)

@@ -1,3 +1,61 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="@string/settings_category_theme"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            android:key="pref_theme_mode"
+            android:title="@string/settings_theme_mode_title"
+            android:entries="@array/theme_mode_entries"
+            android:entryValues="@array/theme_mode_values"
+            android:defaultValue="system"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:key="pref_theme_contrast"
+            android:title="@string/settings_theme_contrast_title"
+            android:entries="@array/theme_contrast_entries"
+            android:entryValues="@array/theme_contrast_values"
+            android:defaultValue="standard"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_dynamic_color"
+            android:title="@string/settings_dynamic_color_title"
+            android:summary="@string/settings_dynamic_color_summary"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_category_security"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:key="pref_security_screen"
+            android:title="@string/settings_security_screen_title"
+            android:summary="@string/settings_security_screen_summary"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_biometric_enabled"
+            android:title="@string/settings_biometric_title"
+            android:summary="@string/settings_biometric_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="pref_app_lock"
+            android:title="@string/settings_app_lock_title"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

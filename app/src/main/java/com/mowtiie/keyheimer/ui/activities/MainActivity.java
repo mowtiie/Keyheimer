@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -236,6 +235,10 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
         SortOption selected = sortOptionForMenuItem(item.getItemId());
         if (selected != null) {
             currentSort = selected;
