@@ -2,6 +2,7 @@ package com.mowtiie.keyheimer.ui.activities;
 
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -15,6 +16,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
@@ -25,6 +28,7 @@ import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.IntervalConverter;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.UUID;
 
 public class AddEditSecretActivity extends AppCompatActivity {
@@ -34,11 +38,15 @@ public class AddEditSecretActivity extends AppCompatActivity {
     private static final Secret.IntervalUnit[] INTERVAL_UNITS = {
             Secret.IntervalUnit.DAY, Secret.IntervalUnit.WEEK, Secret.IntervalUnit.MONTH
     };
+    private static final int DEFAULT_REMINDER_HOUR = 9;
+    private static final int DEFAULT_REMINDER_MINUTE = 0;
 
     private ActivityAddEditSecretBinding binding;
     private SecretDao dao;
     private boolean editMode;
     private Secret existingSecret;
+    private int selectedHour = DEFAULT_REMINDER_HOUR;
+    private int selectedMinute = DEFAULT_REMINDER_MINUTE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,25 +62,52 @@ public class AddEditSecretActivity extends AppCompatActivity {
 
         binding.toolbar.setTitle(editMode ? R.string.title_edit_secret : R.string.title_add_secret);
         binding.toolbar.setNavigationOnClickListener(v -> finish());
-
         setSupportActionBar(binding.toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
 
         setUpIntervalUnitDropdown();
+        setUpReminderTimePicker();
         setUpEdgeToEdgeInsets();
 
         if (editMode) {
             loadExistingSecret(secretId);
         } else {
             binding.inputIntervalUnit.setText(getResources().getStringArray(R.array.interval_units)[0], false);
+            updateTimeDisplay();
         }
     }
 
     private void setUpIntervalUnitDropdown() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.interval_units));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_dropdown_item_1line,
+                getResources().getStringArray(R.array.interval_units));
         binding.inputIntervalUnit.setAdapter(adapter);
+    }
+
+    private void setUpReminderTimePicker() {
+        binding.inputReminderTime.setOnClickListener(v -> openTimePicker());
+    }
+
+    private void openTimePicker() {
+        int clockFormat = DateFormat.is24HourFormat(this) ? TimeFormat.CLOCK_24H : TimeFormat.CLOCK_12H;
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setTimeFormat(clockFormat)
+                .setHour(selectedHour)
+                .setMinute(selectedMinute)
+                .setTitleText(R.string.reminder_time_picker_title)
+                .build();
+        picker.addOnPositiveButtonClickListener(v -> {
+            selectedHour = picker.getHour();
+            selectedMinute = picker.getMinute();
+            updateTimeDisplay();
+        });
+        picker.show(getSupportFragmentManager(), "reminder_time_picker");
+    }
+
+    private void updateTimeDisplay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+        calendar.set(Calendar.MINUTE, selectedMinute);
+        binding.inputReminderTime.setText(DateFormat.getTimeFormat(this).format(calendar.getTime()));
     }
 
     private void setUpEdgeToEdgeInsets() {
@@ -100,7 +135,12 @@ public class AddEditSecretActivity extends AppCompatActivity {
         binding.inputName.setText(secret.getName());
         binding.inputHint.setText(secret.getHint());
         binding.inputIntervalValue.setText(String.valueOf(secret.getIntervalValue()));
-        binding.inputIntervalUnit.setText(getResources().getStringArray(R.array.interval_units)[indexOfUnit(secret.getIntervalUnit())], false);
+        binding.inputIntervalUnit.setText(
+                getResources().getStringArray(R.array.interval_units)[indexOfUnit(secret.getIntervalUnit())],
+                false);
+        selectedHour = secret.getReminderHour();
+        selectedMinute = secret.getReminderMinute();
+        updateTimeDisplay();
         binding.switchActive.setChecked(secret.isActive());
         binding.tilPassphrase.setHelperText(getString(R.string.helper_passphrase_edit));
         invalidateOptionsMenu();
@@ -139,7 +179,6 @@ public class AddEditSecretActivity extends AppCompatActivity {
             binding.tilIntervalValue.setError(getString(R.string.error_interval_value_required));
             return;
         }
-
         binding.tilIntervalValue.setError(null);
 
         char[] passphrase = charsOf(binding.inputPassphrase.getText());
@@ -150,12 +189,10 @@ public class AddEditSecretActivity extends AppCompatActivity {
             binding.tilPassphrase.setError(getString(R.string.error_passphrase_required));
             return;
         }
-
         if (changingPassphrase && !Arrays.equals(passphrase, confirmPassphrase)) {
             binding.tilConfirmPassphrase.setError(getString(R.string.error_passphrase_mismatch));
             return;
         }
-
         binding.tilPassphrase.setError(null);
         binding.tilConfirmPassphrase.setError(null);
 
@@ -170,7 +207,10 @@ public class AddEditSecretActivity extends AppCompatActivity {
         secret.setIntervalValue(intervalValue);
         secret.setIntervalUnit(intervalUnit);
         secret.setActive(active);
-        secret.setNextTriggerAt(IntervalConverter.computeNextTriggerAt(intervalValue, intervalUnit));
+        secret.setReminderHour(selectedHour);
+        secret.setReminderMinute(selectedMinute);
+        secret.setNextTriggerAt(IntervalConverter.computeNextTriggerAt(
+                intervalValue, intervalUnit, selectedHour, selectedMinute));
 
         if (changingPassphrase) {
             byte[] salt = HashUtil.generateSalt();
@@ -179,7 +219,6 @@ public class AddEditSecretActivity extends AppCompatActivity {
             secret.setIterations(iterations);
             secret.setHash(HashUtil.hash(passphrase, salt, iterations));
         }
-
         Arrays.fill(passphrase, '\0');
         Arrays.fill(confirmPassphrase, '\0');
 
@@ -206,7 +245,8 @@ public class AddEditSecretActivity extends AppCompatActivity {
 
     private void confirmDelete() {
         new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.delete_confirm_title)
+                .setIcon(R.drawable.ic_delete_outline)
+                .setTitle(getString(R.string.delete_confirm_title, existingSecret.getName()))
                 .setMessage(R.string.delete_confirm_message)
                 .setPositiveButton(R.string.delete_confirm_positive, (dialog, which) -> deleteSecret())
                 .setNegativeButton(R.string.delete_confirm_negative, null)
