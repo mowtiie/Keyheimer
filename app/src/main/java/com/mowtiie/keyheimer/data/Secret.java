@@ -21,11 +21,19 @@ public class Secret {
     private int successCount;
     private int failCount;
     private boolean active;
+    private long createdAt;
+    private long updatedAt;
+    private int reminderHour;
+    private int reminderMinute;
 
     public Secret() {
     }
 
-    public Secret(String id, String name, byte[] salt, String hash, int iterations, String hint, int intervalValue, IntervalUnit intervalUnit, long nextTriggerAt, Long lastVerifiedAt, int successCount, int failCount, boolean active) {
+    public Secret(String id, String name, byte[] salt, String hash, int iterations,
+                  String hint, int intervalValue, IntervalUnit intervalUnit,
+                  long nextTriggerAt, Long lastVerifiedAt,
+                  int successCount, int failCount, boolean active,
+                  long createdAt, long updatedAt, int reminderHour, int reminderMinute) {
         this.id = id;
         this.name = name;
         this.salt = salt;
@@ -39,6 +47,10 @@ public class Secret {
         this.successCount = successCount;
         this.failCount = failCount;
         this.active = active;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.reminderHour = reminderHour;
+        this.reminderMinute = reminderMinute;
     }
 
     public String getId() {
@@ -143,5 +155,37 @@ public class Secret {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public int getReminderHour() {
+        return reminderHour;
+    }
+
+    public void setReminderHour(int reminderHour) {
+        this.reminderHour = reminderHour;
+    }
+
+    public int getReminderMinute() {
+        return reminderMinute;
+    }
+
+    public void setReminderMinute(int reminderMinute) {
+        this.reminderMinute = reminderMinute;
     }
 }
