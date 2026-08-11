@@ -67,4 +67,31 @@
     <string name="sort_updated_asc">Oldest updated</string>
     <string name="sort_created_desc">Recently created</string>
     <string name="sort_created_asc">Oldest created</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_settings">Settings</string>
+
+    <string name="settings_category_theme">Theme</string>
+    <string name="settings_theme_mode_title">Theme</string>
+    <string name="settings_theme_contrast_title">Contrast</string>
+    <string name="settings_dynamic_color_title">Dynamic color</string>
+    <string name="settings_dynamic_color_summary">Match the app\'s colors to your wallpaper</string>
+    <string name="settings_dynamic_color_unsupported">Not supported on this device</string>
+
+    <string name="settings_category_security">Security</string>
+    <string name="settings_security_screen_title">Security screen</string>
+    <string name="settings_security_screen_summary">Block screenshots and screen recording</string>
+    <string name="settings_biometric_title">Biometric unlock</string>
+    <string name="settings_biometric_summary">Use your fingerprint or face to unlock</string>
+    <string name="settings_biometric_unsupported">Not available on this device</string>
+    <string name="settings_app_lock_title">App lock</string>
+    <string name="settings_app_lock_summary_unset">Not set</string>
+    <string name="settings_app_lock_summary_set">PIN set</string>
+
+    <string name="settings_app_lock_dialog_title">Set app lock PIN</string>
+    <string name="settings_app_lock_dialog_save">Save</string>
+    <string name="settings_app_lock_dialog_remove">Remove</string>
+    <string name="settings_app_lock_pin_label">PIN</string>
+    <string name="settings_app_lock_pin_helper">4–6 digits</string>
+    <string name="settings_app_lock_error_length">Enter at least 4 digits</string>
 </resources>
