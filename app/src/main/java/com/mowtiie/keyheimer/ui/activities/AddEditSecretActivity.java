@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.UUID;
 
-public class AddEditSecretActivity extends AppCompatActivity {
+public class AddEditSecretActivity extends KeyheimerActivity {
 
     public static final String EXTRA_SECRET_ID = "secret_id";
 
@@ -245,7 +245,7 @@ public class AddEditSecretActivity extends AppCompatActivity {
 
     private void confirmDelete() {
         new MaterialAlertDialogBuilder(this)
-                .setIcon(R.drawable.ic_delete_outline)
+                .setIcon(R.drawable.ic_delete)
                 .setTitle(getString(R.string.delete_confirm_title, existingSecret.getName()))
                 .setMessage(R.string.delete_confirm_message)
                 .setPositiveButton(R.string.delete_confirm_positive, (dialog, which) -> deleteSecret())

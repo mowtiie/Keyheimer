@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements SecretAdapter.Listener {
+public class MainActivity extends KeyheimerActivity implements SecretAdapter.Listener {
 
     public static final String EXTRA_VERIFY_SECRET_ID = "verify_secret_id";
 

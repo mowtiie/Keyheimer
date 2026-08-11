@@ -13,7 +13,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.databinding.ActivitySettingsBinding;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends KeyheimerActivity {
 
     private ActivitySettingsBinding binding;
 
