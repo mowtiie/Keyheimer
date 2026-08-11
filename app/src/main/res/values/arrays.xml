@@ -5,4 +5,26 @@
         <item>Week(s)</item>
         <item>Month(s)</item>
     </string-array>
+
+    <string-array name="theme_mode_entries">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>System default</item>
+    </string-array>
+    <string-array name="theme_mode_values">
+        <item>light</item>
+        <item>dark</item>
+        <item>system</item>
+    </string-array>
+
+    <string-array name="theme_contrast_entries">
+        <item>Standard</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+    <string-array name="theme_contrast_values">
+        <item>standard</item>
+        <item>medium</item>
+        <item>high</item>
+    </string-array>
 </resources>
