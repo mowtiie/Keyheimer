@@ -17,9 +17,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Keyheimer">
         <activity
+            android:name=".ui.activities.LockActivity"
+            android:launchMode="singleTask"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.SettingsActivity"
-            android:parentActivityName=".ui.activities.MainActivity"
-            android:exported="false"/>
+            android:exported="false"
+            android:parentActivityName=".ui.activities.MainActivity" />
         <activity
             android:name=".ui.activities.AddEditSecretActivity"
             android:exported="false"

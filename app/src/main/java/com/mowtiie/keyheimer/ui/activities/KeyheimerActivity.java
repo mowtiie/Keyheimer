@@ -1,5 +1,6 @@
 package com.mowtiie.keyheimer.ui.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -9,6 +10,7 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.color.DynamicColors;
 import com.mowtiie.keyheimer.R;
+import com.mowtiie.keyheimer.util.AppLockManager;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
 import com.mowtiie.keyheimer.util.SecurityScreenUtil;
 
@@ -21,6 +23,14 @@ public abstract class KeyheimerActivity extends AppCompatActivity {
         applyContrastTheme();
         applyDynamicColor();
         SecurityScreenUtil.apply(getWindow(), this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (AppLockManager.getInstance().isLockRequired(this)) {
+            startActivity(new Intent(this, LockActivity.class));
+        }
     }
 
     private SharedPreferences prefs() {
