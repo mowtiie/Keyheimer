@@ -73,4 +73,13 @@
         <item name="buttonBarNegativeButtonStyle">@style/Widget.Material3.Button.TextButton.Dialog</item>
         <item name="buttonBarNeutralButtonStyle">@style/Widget.Material3.Button.TextButton.Dialog.Flush</item>
     </style>
+
+    <style name="TextAppearance.Keyheimer.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">serif</item>
+        <item name="fontFamily">serif</item>
+    </style>
+
+    <style name="Widget.Keyheimer.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextAppearance">@style/TextAppearance.Keyheimer.ToolbarTitle</item>
+    </style>
 </resources>
