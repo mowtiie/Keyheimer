@@ -95,6 +95,11 @@
     <string name="settings_app_lock_pin_helper">4–6 digits</string>
     <string name="settings_app_lock_error_length">Enter at least 4 digits</string>
 
+    <string name="settings_category_reminders">Reminders</string>
+    <string name="settings_exact_alarms_title">Exact alarms</string>
+    <string name="settings_exact_alarms_summary_allowed">Allowed — reminders arrive on time</string>
+    <string name="settings_exact_alarms_summary_not_allowed">Not allowed — reminders may be delayed. Tap to enable.</string>
+
     <string name="lock_title">Locked</string>
     <string name="lock_unlock_button">Unlock</string>
     <string name="lock_use_biometric_button">Use biometric</string>
