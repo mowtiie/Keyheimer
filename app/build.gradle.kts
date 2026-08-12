@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.biometric)
     implementation(libs.constraintlayout)
+    implementation(libs.lifecycle.process)
     implementation(libs.material)
     implementation(libs.preference)
     testImplementation(libs.junit)
