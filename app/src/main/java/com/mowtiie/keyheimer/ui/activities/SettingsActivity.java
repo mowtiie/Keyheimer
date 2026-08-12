@@ -29,6 +29,7 @@ import com.mowtiie.keyheimer.databinding.ActivitySettingsBinding;
 import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
+import com.mowtiie.keyheimer.util.ThemeUtil;
 
 import java.util.Arrays;
 
@@ -65,6 +66,15 @@ public class SettingsActivity extends KeyheimerActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
+        private final SharedPreferences.OnSharedPreferenceChangeListener themeChangeListener =
+                (sharedPreferences, key) -> {
+                    if (PreferenceKeys.KEY_THEME_MODE.equals(key)) {
+                        ThemeUtil.applyNightMode(sharedPreferences);
+                    } else if (PreferenceKeys.KEY_THEME_CONTRAST.equals(key) || PreferenceKeys.KEY_DYNAMIC_COLOR.equals(key)) {
+                        requireActivity().recreate();
+                    }
+                };
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences_settings, rootKey);
@@ -78,6 +88,13 @@ public class SettingsActivity extends KeyheimerActivity {
         public void onResume() {
             super.onResume();
             updateExactAlarmSummary();
+            prefs().registerOnSharedPreferenceChangeListener(themeChangeListener);
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            prefs().unregisterOnSharedPreferenceChangeListener(themeChangeListener);
         }
 
         private void setUpDynamicColorPreference() {
@@ -126,7 +143,8 @@ public class SettingsActivity extends KeyheimerActivity {
         }
 
         private void showAppLockDialog(Preference preference) {
-            View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_app_lock_pin, null);
+            View dialogView = LayoutInflater.from(requireContext())
+                    .inflate(R.layout.dialog_app_lock_pin, null);
             TextInputEditText pinInput = dialogView.findViewById(R.id.input_app_lock_pin);
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
