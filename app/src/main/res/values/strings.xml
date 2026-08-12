@@ -94,4 +94,11 @@
     <string name="settings_app_lock_pin_label">PIN</string>
     <string name="settings_app_lock_pin_helper">4–6 digits</string>
     <string name="settings_app_lock_error_length">Enter at least 4 digits</string>
+
+    <string name="lock_title">Locked</string>
+    <string name="lock_unlock_button">Unlock</string>
+    <string name="lock_use_biometric_button">Use biometric</string>
+    <string name="lock_biometric_prompt_title">Unlock Keyheimer</string>
+    <string name="lock_use_pin_instead">Use PIN</string>
+    <string name="lock_pin_error">Incorrect PIN</string>
 </resources>
