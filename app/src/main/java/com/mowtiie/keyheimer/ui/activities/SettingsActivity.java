@@ -45,6 +45,10 @@ public class SettingsActivity extends KeyheimerActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         setUpEdgeToEdgeInsets();
 
         if (savedInstanceState == null) {
