@@ -1,7 +1,10 @@
 package com.mowtiie.keyheimer.ui.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -23,6 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.databinding.ActivitySettingsBinding;
+import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
 
@@ -58,13 +62,22 @@ public class SettingsActivity extends KeyheimerActivity {
         });
     }
 
+
     public static class SettingsFragment extends PreferenceFragmentCompat {
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences_settings, rootKey);
             setUpDynamicColorPreference();
             setUpBiometricPreference();
             setUpAppLockPreference();
+            setUpExactAlarmPreference();
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            updateExactAlarmSummary();
         }
 
         private void setUpDynamicColorPreference() {
@@ -84,7 +97,6 @@ public class SettingsActivity extends KeyheimerActivity {
             if (preference == null) {
                 return;
             }
-
             BiometricManager biometricManager = BiometricManager.from(requireContext());
             int canAuthenticate = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG);
             if (canAuthenticate != BiometricManager.BIOMETRIC_SUCCESS) {
@@ -143,6 +155,31 @@ public class SettingsActivity extends KeyheimerActivity {
                 dialog.dismiss();
                 updateAppLockSummary(preference);
             });
+        }
+
+        private void setUpExactAlarmPreference() {
+            Preference preference = findPreference(PreferenceKeys.KEY_EXACT_ALARMS);
+            if (preference == null) {
+                return;
+            }
+            preference.setOnPreferenceClickListener(clicked -> {
+                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                intent.setData(Uri.parse("package:" + requireContext().getPackageName()));
+                startActivity(intent);
+                return true;
+            });
+            updateExactAlarmSummary();
+        }
+
+        private void updateExactAlarmSummary() {
+            Preference preference = findPreference(PreferenceKeys.KEY_EXACT_ALARMS);
+            if (preference == null) {
+                return;
+            }
+            boolean allowed = ReminderScheduler.canScheduleExactAlarms(requireContext());
+            preference.setSummary(allowed
+                    ? R.string.settings_exact_alarms_summary_allowed
+                    : R.string.settings_exact_alarms_summary_not_allowed);
         }
 
         private SharedPreferences prefs() {

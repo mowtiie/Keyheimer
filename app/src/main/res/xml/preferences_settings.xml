@@ -58,7 +58,16 @@
             android:key="pref_app_lock"
             android:title="@string/settings_app_lock_title"
             app:iconSpaceReserved="false" />
-
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/settings_category_reminders"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="pref_exact_alarms"
+            android:icon="@drawable/ic_alarm"
+            android:title="@string/settings_exact_alarms_title" />
+
+    </PreferenceCategory>
 </PreferenceScreen>
