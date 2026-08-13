@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mowtiie.keyheimer.KeyheimerApp;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
@@ -33,6 +35,7 @@ import com.mowtiie.keyheimer.ui.adapters.SecretAdapter;
 import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.AppLockManager;
+import com.mowtiie.keyheimer.util.CrashReporter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +55,21 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
     private List<Secret> allSecrets = new ArrayList<>();
     private String currentQuery = "";
     private SortOption currentSort = SortOption.NAME_ASC;
+
+    private final ActivityResultLauncher<Intent> saveCrashLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() != RESULT_OK || result.getData() == null) return;
+                        android.net.Uri uri = result.getData().getData();
+                        if (uri == null) return;
+
+                        if (CrashReporter.writeReportToUri(this, uri)) {
+                            Toast.makeText(this, R.string.toast_crash_save_success, Toast.LENGTH_SHORT).show();
+                            CrashReporter.deleteReport(this);
+                        } else {
+                            Toast.makeText(this, R.string.toast_crash_save_failure, Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
     private final ActivityResultLauncher<String> notificationPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
@@ -79,6 +97,10 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
         requestNotificationPermissionIfNeeded();
         requestExactAlarmPermissionIfNeeded();
         handleVerifyIntent(getIntent());
+
+        if (savedInstanceState == null) {
+            CrashReporter.showDialogIfPending(this, saveCrashLauncher);
+        }
     }
 
     @Override
