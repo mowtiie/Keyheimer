@@ -6,14 +6,12 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         android:title="@string/action_search"
-        android:iconTint="?attr/colorOnSurfaceVariant"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
     <item
         android:id="@+id/action_sort"
         android:icon="@drawable/ic_sort"
-        android:iconTint="?attr/colorOnSurfaceVariant"
         android:title="@string/action_sort"
         app:showAsAction="ifRoom">
         <menu>
@@ -43,8 +41,13 @@
     </item>
 
     <item
+        android:id="@+id/action_lock_now"
+        android:icon="@drawable/ic_lock"
+        android:title="@string/action_lock_now"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-
 </menu>
