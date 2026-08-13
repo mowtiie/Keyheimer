@@ -32,6 +32,7 @@ import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.ui.adapters.SecretAdapter;
 import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
 import com.mowtiie.keyheimer.util.AppExecutors;
+import com.mowtiie.keyheimer.util.AppLockManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,8 +139,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
 
             binding.recyclerSecrets.setPadding(bars.left, 0, bars.right, listBasePadding + bars.bottom);
 
-            ViewGroup.MarginLayoutParams fabParams =
-                    (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+            ViewGroup.MarginLayoutParams fabParams = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
             fabParams.leftMargin = fabBaseMargin + bars.left;
             fabParams.rightMargin = fabBaseMargin + bars.right;
             fabParams.bottomMargin = fabBaseMargin + bars.bottom;
@@ -153,6 +153,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
     protected void onResume() {
         super.onResume();
         loadSecrets();
+        invalidateOptionsMenu();
     }
 
     private void loadSecrets() {
@@ -234,9 +235,23 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem lockNowItem = menu.findItem(R.id.action_lock_now);
+        if (lockNowItem != null) {
+            lockNowItem.setVisible(AppLockManager.getInstance().isLockConfigured(this));
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        if (item.getItemId() == R.id.action_lock_now) {
+            AppLockManager.getInstance().markLocked();
+            startActivity(new Intent(this, LockActivity.class));
             return true;
         }
         SortOption selected = sortOptionForMenuItem(item.getItemId());
