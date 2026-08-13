@@ -66,7 +66,7 @@
 
         <Preference
             android:key="pref_exact_alarms"
-            android:icon="@drawable/ic_alarm"
+            app:iconSpaceReserved="false"
             android:title="@string/settings_exact_alarms_title" />
 
     </PreferenceCategory>
