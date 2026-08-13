@@ -22,6 +22,7 @@ import com.mowtiie.keyheimer.ui.activities.AddEditSecretActivity;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.IntervalConverter;
+import com.mowtiie.keyheimer.util.SecurityScreenUtil;
 
 import java.util.Arrays;
 
@@ -46,6 +47,14 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
     private final Handler autoCloseHandler = new Handler(Looper.getMainLooper());
     private final Runnable autoCloseRunnable = this::dismissAllowingStateLoss;
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            SecurityScreenUtil.apply(getDialog().getWindow(), requireContext());
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -59,7 +68,6 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
         super.onViewCreated(view, savedInstanceState);
         dao = new SecretDao(requireContext());
 
-        binding.buttonShowHint.setOnClickListener(v -> revealHint());
         binding.buttonVerify.setOnClickListener(v -> attemptVerify());
         binding.buttonDone.setOnClickListener(v -> dismiss());
         binding.buttonResetPassphrase.setOnClickListener(v -> openResetPassphrase());
@@ -82,13 +90,7 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
         secret = loaded;
         binding.textSecretName.setText(secret.getName());
         boolean hasHint = secret.getHint() != null && !secret.getHint().isEmpty();
-        binding.buttonShowHint.setVisibility(hasHint ? View.VISIBLE : View.GONE);
-    }
-
-    private void revealHint() {
-        binding.textHint.setText(secret.getHint());
-        binding.textHint.setVisibility(View.VISIBLE);
-        binding.buttonShowHint.setVisibility(View.GONE);
+        binding.tilPassphrase.setHelperText(hasHint ? secret.getHint() : null);
     }
 
     private void attemptVerify() {
@@ -120,7 +122,9 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void onVerifySuccess() {
-        long nextTriggerAt = IntervalConverter.computeNextTriggerAt(secret.getIntervalValue(), secret.getIntervalUnit(), secret.getReminderHour(), secret.getReminderMinute());
+        long nextTriggerAt = IntervalConverter.computeNextTriggerAt(
+                secret.getIntervalValue(), secret.getIntervalUnit(),
+                secret.getReminderHour(), secret.getReminderMinute());
         String secretId = secret.getId();
 
         AppExecutors.getInstance().diskIO().execute(() -> {

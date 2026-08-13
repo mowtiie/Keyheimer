@@ -41,7 +41,6 @@
     <string name="delete_confirm_positive">Delete</string>
     <string name="delete_confirm_negative">Cancel</string>
 
-    <string name="verify_show_hint">Show hint</string>
     <string name="verify_button">Verify</string>
     <string name="verify_error_message">That doesn\'t match. Try again, or reset this reminder.</string>
     <string name="verify_success_message">You remembered it!</string>
