@@ -62,7 +62,11 @@ public class AddEditSecretActivity extends KeyheimerActivity {
 
         binding.toolbar.setTitle(editMode ? R.string.title_edit_secret : R.string.title_add_secret);
         binding.toolbar.setNavigationOnClickListener(v -> finish());
+
         setSupportActionBar(binding.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         setUpIntervalUnitDropdown();
         setUpReminderTimePicker();
