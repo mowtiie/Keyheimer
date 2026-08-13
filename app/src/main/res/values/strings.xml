@@ -86,14 +86,16 @@
     <string name="settings_biometric_unsupported">Not available on this device</string>
     <string name="settings_app_lock_title">App lock</string>
     <string name="settings_app_lock_summary_unset">Not set</string>
-    <string name="settings_app_lock_summary_set">PIN set</string>
+    <string name="settings_app_lock_summary_set">Password set</string>
 
-    <string name="settings_app_lock_dialog_title">Set app lock PIN</string>
+    <string name="settings_app_lock_dialog_title">Set app lock password</string>
     <string name="settings_app_lock_dialog_save">Save</string>
     <string name="settings_app_lock_dialog_remove">Remove</string>
-    <string name="settings_app_lock_pin_label">PIN</string>
-    <string name="settings_app_lock_pin_helper">4–6 digits</string>
-    <string name="settings_app_lock_error_length">Enter at least 4 digits</string>
+    <string name="settings_app_lock_password_label">Password</string>
+    <string name="settings_app_lock_password_helper">At least 6 characters</string>
+    <string name="settings_app_lock_error_length">Enter at least 6 characters</string>
+
+    <string name="action_lock_now">Lock now</string>
 
     <string name="settings_category_reminders">Reminders</string>
     <string name="settings_exact_alarms_title">Exact alarms</string>
@@ -104,6 +106,6 @@
     <string name="lock_unlock_button">Unlock</string>
     <string name="lock_use_biometric_button">Use biometric</string>
     <string name="lock_biometric_prompt_title">Unlock Keyheimer</string>
-    <string name="lock_use_pin_instead">Use PIN</string>
-    <string name="lock_pin_error">Incorrect PIN</string>
+    <string name="lock_use_password_instead">Use password</string>
+    <string name="lock_password_error">Incorrect password</string>
 </resources>
