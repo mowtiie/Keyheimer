@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Keyheimer</string>
+    <string name="app_easter_egg">You\'ve done this before, haven\'t you?</string>
+    <string name="app_license">GNU General Public License v3.0</string>
+    <string name="app_author">mowtiie</string>
+
     <string name="empty_state_kaomoji">( ・_・)</string>
     <string name="empty_state_message">No secrets yet. Tap + to add one.</string>
     <string name="add_secret">Add secret</string>
@@ -8,6 +12,11 @@
 
     <string name="title_add_secret">Add secret</string>
     <string name="title_edit_secret">Edit secret</string>
+
+    <string name="title_about">About</string>
+    <string name="action_about">About</string>
+
+    <string name="dialog_button_close">Close</string>
 
     <string name="label_name">Secret name</string>
     <string name="helper_name">e.g. Password manager master password</string>
@@ -118,4 +127,13 @@
     <string name="toast_crash_copy_success">Crash report copied to clipboard</string>
     <string name="toast_crash_save_success">Crash report saved</string>
     <string name="toast_crash_save_failure">Couldn\'t save the crash report</string>
+
+    <string name="preference_support_title">Support the developer</string>
+    <string name="preference_support_summary">If you enjoy using Keyheimer, you can support its development</string>
+    <string name="preference_category_about">About</string>
+    <string name="preference_app_version">Version</string>
+    <string name="preference_app_license">License</string>
+    <string name="preference_app_source_code_title">Source Code</string>
+    <string name="preference_app_source_code_summary">Check the Github repository and the README</string>
+    <string name="preference_app_author">Author</string>
 </resources>

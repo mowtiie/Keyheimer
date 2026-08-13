@@ -265,10 +265,16 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_about) {
+            startActivity(new Intent(this, AboutActivity.class));
+            return true;
+        }
+
         if (item.getItemId() == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
+
         if (item.getItemId() == R.id.action_lock_now) {
             AppLockManager.getInstance().markLocked();
             startActivity(new Intent(this, LockActivity.class));
