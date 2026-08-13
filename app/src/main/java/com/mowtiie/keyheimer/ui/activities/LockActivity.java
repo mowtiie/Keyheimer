@@ -26,7 +26,7 @@ import java.util.Arrays;
 public class LockActivity extends KeyheimerActivity {
 
     private ActivityLockBinding binding;
-    private boolean hasPin;
+    private boolean hasPassword;
     private boolean biometricAvailable;
 
     @Override
@@ -37,14 +37,14 @@ public class LockActivity extends KeyheimerActivity {
         setContentView(binding.getRoot());
 
         AppLockManager lockManager = AppLockManager.getInstance();
-        hasPin = lockManager.hasPin(this);
+        hasPassword = lockManager.hasPassword(this);
         biometricAvailable = lockManager.isBiometricEnabled(this) && canUseBiometric();
 
-        binding.tilPin.setVisibility(hasPin ? View.VISIBLE : View.GONE);
-        binding.buttonUnlockPin.setVisibility(hasPin ? View.VISIBLE : View.GONE);
+        binding.tilPassword.setVisibility(hasPassword ? View.VISIBLE : View.GONE);
+        binding.buttonUnlockPassword.setVisibility(hasPassword ? View.VISIBLE : View.GONE);
         binding.buttonUseBiometric.setVisibility(biometricAvailable ? View.VISIBLE : View.GONE);
 
-        binding.buttonUnlockPin.setOnClickListener(v -> attemptPinUnlock());
+        binding.buttonUnlockPassword.setOnClickListener(v -> attemptPasswordUnlock());
         binding.buttonUseBiometric.setOnClickListener(v -> showBiometricPrompt());
 
         setUpEdgeToEdgeInsets();
@@ -55,14 +55,13 @@ public class LockActivity extends KeyheimerActivity {
     }
 
     private boolean canUseBiometric() {
-        return BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-                == BiometricManager.BIOMETRIC_SUCCESS;
+        return BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
     private void showBiometricPrompt() {
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle(getString(R.string.lock_biometric_prompt_title))
-                .setNegativeButtonText(getString(hasPin ? R.string.lock_use_pin_instead : R.string.delete_confirm_negative))
+                .setNegativeButtonText(getString(hasPassword ? R.string.lock_use_password_instead : R.string.delete_confirm_negative))
                 .build();
 
         BiometricPrompt prompt = new BiometricPrompt(this, ContextCompat.getMainExecutor(this),
@@ -75,28 +74,28 @@ public class LockActivity extends KeyheimerActivity {
         prompt.authenticate(promptInfo);
     }
 
-    private void attemptPinUnlock() {
-        char[] pin = charsOf(binding.inputPin.getText());
-        boolean matches = verifyPin(pin);
-        Arrays.fill(pin, '\0');
+    private void attemptPasswordUnlock() {
+        char[] password = charsOf(binding.inputPassword.getText());
+        boolean matches = verifyPassword(password);
+        Arrays.fill(password, '\0');
         if (matches) {
             unlock();
         } else {
-            binding.tilPin.setError(getString(R.string.lock_pin_error));
-            binding.inputPin.setText(null);
+            binding.tilPassword.setError(getString(R.string.lock_password_error));
+            binding.inputPassword.setText(null);
         }
     }
 
-    private boolean verifyPin(char[] pin) {
+    private boolean verifyPassword(char[] password) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String storedHash = prefs.getString(PreferenceKeys.KEY_APP_LOCK_PIN_HASH, "");
-        String saltEncoded = prefs.getString(PreferenceKeys.KEY_APP_LOCK_PIN_SALT, "");
-        int iterations = prefs.getInt(PreferenceKeys.KEY_APP_LOCK_PIN_ITERATIONS, HashUtil.DEFAULT_ITERATIONS);
+        String storedHash = prefs.getString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, "");
+        String saltEncoded = prefs.getString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_SALT, "");
+        int iterations = prefs.getInt(PreferenceKeys.KEY_APP_LOCK_PASSWORD_ITERATIONS, HashUtil.DEFAULT_ITERATIONS);
         if (storedHash.isEmpty() || saltEncoded.isEmpty()) {
             return false;
         }
         byte[] salt = Base64.decode(saltEncoded, Base64.NO_WRAP);
-        return HashUtil.verify(pin, salt, iterations, storedHash);
+        return HashUtil.verify(password, salt, iterations, storedHash);
     }
 
     private void unlock() {
