@@ -68,7 +68,7 @@ public class SettingsActivity extends KeyheimerActivity {
         });
     }
 
-    public class SettingsFragment extends PreferenceFragmentCompat {
+    public static class SettingsFragment extends PreferenceFragmentCompat {
 
         private final SharedPreferences.OnSharedPreferenceChangeListener themeChangeListener =
                 (sharedPreferences, key) -> {
