@@ -67,14 +67,16 @@ public class SettingsActivity extends KeyheimerActivity {
         });
     }
 
+    public class SettingsFragment extends PreferenceFragmentCompat {
 
-    public static class SettingsFragment extends PreferenceFragmentCompat {
-
+        // Held as a field (not a local/lambda-only reference) because
+        // SharedPreferences only keeps a weak reference to registered listeners.
         private final SharedPreferences.OnSharedPreferenceChangeListener themeChangeListener =
                 (sharedPreferences, key) -> {
                     if (PreferenceKeys.KEY_THEME_MODE.equals(key)) {
                         ThemeUtil.applyNightMode(sharedPreferences);
-                    } else if (PreferenceKeys.KEY_THEME_CONTRAST.equals(key) || PreferenceKeys.KEY_DYNAMIC_COLOR.equals(key)) {
+                    } else if (PreferenceKeys.KEY_THEME_CONTRAST.equals(key)
+                            || PreferenceKeys.KEY_DYNAMIC_COLOR.equals(key)) {
                         requireActivity().recreate();
                     }
                 };
@@ -140,16 +142,15 @@ public class SettingsActivity extends KeyheimerActivity {
         }
 
         private void updateAppLockSummary(Preference preference) {
-            boolean hasPin = !currentPinHash().isEmpty();
-            preference.setSummary(hasPin
+            boolean hasPassword = !currentPasswordHash().isEmpty();
+            preference.setSummary(hasPassword
                     ? R.string.settings_app_lock_summary_set
                     : R.string.settings_app_lock_summary_unset);
         }
 
         private void showAppLockDialog(Preference preference) {
-            View dialogView = LayoutInflater.from(requireContext())
-                    .inflate(R.layout.dialog_app_lock_pin, null);
-            TextInputEditText pinInput = dialogView.findViewById(R.id.input_app_lock_pin);
+            View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_app_lock_password, null);
+            TextInputEditText passwordInput = dialogView.findViewById(R.id.input_app_lock_password);
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
                     .setIcon(R.drawable.ic_lock)
@@ -158,22 +159,22 @@ public class SettingsActivity extends KeyheimerActivity {
                     .setPositiveButton(R.string.settings_app_lock_dialog_save, null)
                     .setNegativeButton(R.string.delete_confirm_negative, null);
 
-            if (!currentPinHash().isEmpty()) {
+            if (!currentPasswordHash().isEmpty()) {
                 builder.setNeutralButton(R.string.settings_app_lock_dialog_remove, (dialog, which) -> {
-                    clearPin();
+                    clearPassword();
                     updateAppLockSummary(preference);
                 });
             }
 
             AlertDialog dialog = builder.show();
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                char[] pin = charsOf(pinInput.getText());
-                if (pin.length < 4) {
-                    pinInput.setError(getString(R.string.settings_app_lock_error_length));
+                char[] password = charsOf(passwordInput.getText());
+                if (password.length < 6) {
+                    passwordInput.setError(getString(R.string.settings_app_lock_error_length));
                     return;
                 }
-                savePin(pin);
-                Arrays.fill(pin, '\0');
+                savePassword(password);
+                Arrays.fill(password, '\0');
                 dialog.dismiss();
                 updateAppLockSummary(preference);
             });
@@ -208,30 +209,30 @@ public class SettingsActivity extends KeyheimerActivity {
             return PreferenceManager.getDefaultSharedPreferences(requireContext());
         }
 
-        private String currentPinHash() {
-            return prefs().getString(PreferenceKeys.KEY_APP_LOCK_PIN_HASH, "");
+        private String currentPasswordHash() {
+            return prefs().getString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, "");
         }
 
-        private void savePin(char[] pin) {
+        private void savePassword(char[] password) {
             byte[] salt = HashUtil.generateSalt();
             int iterations = HashUtil.DEFAULT_ITERATIONS;
-            String hash = HashUtil.hash(pin, salt, iterations);
+            String hash = HashUtil.hash(password, salt, iterations);
             prefs().edit()
-                    .putString(PreferenceKeys.KEY_APP_LOCK_PIN_HASH, hash)
-                    .putString(PreferenceKeys.KEY_APP_LOCK_PIN_SALT, Base64.encodeToString(salt, Base64.NO_WRAP))
-                    .putInt(PreferenceKeys.KEY_APP_LOCK_PIN_ITERATIONS, iterations)
+                    .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, hash)
+                    .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_SALT, Base64.encodeToString(salt, Base64.NO_WRAP))
+                    .putInt(PreferenceKeys.KEY_APP_LOCK_PASSWORD_ITERATIONS, iterations)
                     .apply();
         }
 
-        private void clearPin() {
+        private void clearPassword() {
             prefs().edit()
-                    .remove(PreferenceKeys.KEY_APP_LOCK_PIN_HASH)
-                    .remove(PreferenceKeys.KEY_APP_LOCK_PIN_SALT)
-                    .remove(PreferenceKeys.KEY_APP_LOCK_PIN_ITERATIONS)
+                    .remove(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH)
+                    .remove(PreferenceKeys.KEY_APP_LOCK_PASSWORD_SALT)
+                    .remove(PreferenceKeys.KEY_APP_LOCK_PASSWORD_ITERATIONS)
                     .apply();
         }
 
-        private static char[] charsOf(Editable editable) {
+        private char[] charsOf(Editable editable) {
             if (editable == null || editable.length() == 0) {
                 return new char[0];
             }

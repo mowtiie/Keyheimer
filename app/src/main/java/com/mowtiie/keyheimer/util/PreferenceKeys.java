@@ -11,9 +11,9 @@ public final class PreferenceKeys {
     public static final String KEY_SECURITY_SCREEN = "pref_security_screen";
     public static final String KEY_BIOMETRIC_ENABLED = "pref_biometric_enabled";
     public static final String KEY_APP_LOCK = "pref_app_lock";
-    public static final String KEY_APP_LOCK_PIN_HASH = "pref_app_lock_pin_hash";
-    public static final String KEY_APP_LOCK_PIN_SALT = "pref_app_lock_pin_salt";
-    public static final String KEY_APP_LOCK_PIN_ITERATIONS = "pref_app_lock_pin_iterations";
+    public static final String KEY_APP_LOCK_PASSWORD_HASH = "pref_app_lock_password_hash";
+    public static final String KEY_APP_LOCK_PASSWORD_SALT = "pref_app_lock_password_salt";
+    public static final String KEY_APP_LOCK_PASSWORD_ITERATIONS = "pref_app_lock_password_iterations";
     public static final String KEY_EXACT_ALARMS = "pref_exact_alarms";
 
     public static final String THEME_MODE_LIGHT = "light";
