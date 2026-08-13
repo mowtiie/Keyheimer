@@ -3,6 +3,7 @@ package com.mowtiie.keyheimer.ui.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
@@ -69,8 +70,6 @@ public class SettingsActivity extends KeyheimerActivity {
 
     public class SettingsFragment extends PreferenceFragmentCompat {
 
-        // Held as a field (not a local/lambda-only reference) because
-        // SharedPreferences only keeps a weak reference to registered listeners.
         private final SharedPreferences.OnSharedPreferenceChangeListener themeChangeListener =
                 (sharedPreferences, key) -> {
                     if (PreferenceKeys.KEY_THEME_MODE.equals(key)) {
@@ -149,7 +148,8 @@ public class SettingsActivity extends KeyheimerActivity {
         }
 
         private void showAppLockDialog(Preference preference) {
-            View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_app_lock_password, null);
+            View dialogView = LayoutInflater.from(requireContext())
+                    .inflate(R.layout.dialog_app_lock_password, null);
             TextInputEditText passwordInput = dialogView.findViewById(R.id.input_app_lock_password);
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
@@ -185,6 +185,12 @@ public class SettingsActivity extends KeyheimerActivity {
             if (preference == null) {
                 return;
             }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                preference.setEnabled(false);
+                preference.setSummary(R.string.settings_exact_alarms_summary_not_needed);
+                return;
+            }
+
             preference.setOnPreferenceClickListener(clicked -> {
                 Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                 intent.setData(Uri.parse("package:" + requireContext().getPackageName()));
@@ -195,6 +201,9 @@ public class SettingsActivity extends KeyheimerActivity {
         }
 
         private void updateExactAlarmSummary() {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                return;
+            }
             Preference preference = findPreference(PreferenceKeys.KEY_EXACT_ALARMS);
             if (preference == null) {
                 return;
@@ -236,6 +245,7 @@ public class SettingsActivity extends KeyheimerActivity {
             if (editable == null || editable.length() == 0) {
                 return new char[0];
             }
+
             char[] chars = new char[editable.length()];
             editable.getChars(0, editable.length(), chars, 0);
             return chars;

@@ -101,6 +101,7 @@
     <string name="settings_exact_alarms_title">Exact alarms</string>
     <string name="settings_exact_alarms_summary_allowed">Allowed — reminders arrive on time</string>
     <string name="settings_exact_alarms_summary_not_allowed">Not allowed — reminders may be delayed. Tap to enable.</string>
+    <string name="settings_exact_alarms_summary_not_needed">Not needed on this Android version</string>
 
     <string name="lock_title">Locked</string>
     <string name="lock_unlock_button">Unlock</string>

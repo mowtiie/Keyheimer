@@ -7,6 +7,7 @@ import android.util.Base64;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
@@ -48,14 +49,25 @@ public class LockActivity extends KeyheimerActivity {
         binding.buttonUseBiometric.setOnClickListener(v -> showBiometricPrompt());
 
         setUpEdgeToEdgeInsets();
+        setUpBackPressedHandling();
 
         if (biometricAvailable) {
             showBiometricPrompt();
         }
     }
 
+    private void setUpBackPressedHandling() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                moveTaskToBack(true);
+            }
+        });
+    }
+
     private boolean canUseBiometric() {
-        return BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS;
+        return BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
     private void showBiometricPrompt() {
