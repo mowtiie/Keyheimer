@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingHorizontal="24dp"
-    android:paddingTop="8dp">
+    android:paddingBottom="24dp"
+    android:paddingTop="16dp">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/crash_action_copy"

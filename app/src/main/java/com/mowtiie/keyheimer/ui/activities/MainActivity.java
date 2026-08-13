@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.mowtiie.keyheimer.KeyheimerApp;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
@@ -90,8 +89,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
         adapter = new SecretAdapter(this);
         binding.recyclerSecrets.setAdapter(adapter);
 
-        binding.fabAddSecret.setOnClickListener(v ->
-                startActivity(new Intent(this, AddEditSecretActivity.class)));
+        binding.fabAddSecret.setOnClickListener(v -> startActivity(new Intent(this, AddEditSecretActivity.class)));
 
         setUpEdgeToEdgeInsets();
         requestNotificationPermissionIfNeeded();
