@@ -60,7 +60,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="@string/add_secret"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:src="@drawable/ic_add"
+        app:layout_behavior="com.google.android.material.behavior.HideViewOnScrollBehavior"
+        android:contentDescription="@string/add_secret"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
