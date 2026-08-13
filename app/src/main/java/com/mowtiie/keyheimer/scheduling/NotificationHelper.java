@@ -8,6 +8,7 @@ import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
 
+import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.ui.activities.MainActivity;
 
@@ -33,7 +34,7 @@ final class NotificationHelper {
         );
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
+                .setSmallIcon(R.drawable.ic_notification_keyheimer)
                 .setContentTitle("Time to recall: " + secret.getName())
                 .setContentText("Tap to verify you still remember it")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
