@@ -125,7 +125,7 @@ public class CrashReporter {
 
     public static String suggestedFilename() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
-        return "dearest_crash_" + sdf.format(new Date()) + ".txt";
+        return "keyheimer_crash_" + sdf.format(new Date()) + ".txt";
     }
 
     private static boolean copyToClipboard(Context context, String report) {
