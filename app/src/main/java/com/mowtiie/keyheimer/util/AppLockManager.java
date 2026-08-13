@@ -26,7 +26,11 @@ public final class AppLockManager {
     }
 
     public boolean isLockRequired(Context context) {
-        return locked && isLockConfigured(context);
+        if (!isLockConfigured(context)) {
+            locked = false;
+            return false;
+        }
+        return locked;
     }
 
     public boolean isLockConfigured(Context context) {
