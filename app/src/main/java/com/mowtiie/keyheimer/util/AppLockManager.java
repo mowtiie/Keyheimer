@@ -34,11 +34,11 @@ public final class AppLockManager {
     }
 
     public boolean isLockConfigured(Context context) {
-        return hasPin(context) || isBiometricEnabled(context);
+        return hasPassword(context) || isBiometricEnabled(context);
     }
 
-    public boolean hasPin(Context context) {
-        return !prefs(context).getString(PreferenceKeys.KEY_APP_LOCK_PIN_HASH, "").isEmpty();
+    public boolean hasPassword(Context context) {
+        return !prefs(context).getString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, "").isEmpty();
     }
 
     public boolean isBiometricEnabled(Context context) {
