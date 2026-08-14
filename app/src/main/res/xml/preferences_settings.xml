@@ -28,8 +28,8 @@
             android:key="pref_dynamic_color"
             android:title="@string/settings_dynamic_color_title"
             android:summary="@string/settings_dynamic_color_summary"
-            android:widgetLayout="@layout/view_preference_switch"
-            android:defaultValue="true"
+            app:widgetLayout="@layout/view_preference_switch"
+            android:defaultValue="false"
             app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
@@ -42,7 +42,7 @@
             android:key="pref_security_screen"
             android:title="@string/settings_security_screen_title"
             android:summary="@string/settings_security_screen_summary"
-            android:widgetLayout="@layout/view_preference_switch"
+            app:widgetLayout="@layout/view_preference_switch"
             android:defaultValue="true"
             app:iconSpaceReserved="false" />
 
@@ -50,7 +50,7 @@
             android:key="pref_biometric_enabled"
             android:title="@string/settings_biometric_title"
             android:summary="@string/settings_biometric_summary"
-            android:widgetLayout="@layout/view_preference_switch"
+            app:widgetLayout="@layout/view_preference_switch"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
 
@@ -58,6 +58,7 @@
             android:key="pref_app_lock"
             android:title="@string/settings_app_lock_title"
             app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -68,6 +69,5 @@
             android:key="pref_exact_alarms"
             app:iconSpaceReserved="false"
             android:title="@string/settings_exact_alarms_title" />
-
     </PreferenceCategory>
 </PreferenceScreen>
