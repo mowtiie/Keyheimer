@@ -28,8 +28,8 @@
     <string name="label_confirm_passphrase">Confirm passphrase</string>
     <string name="helper_confirm_passphrase">Re-enter to confirm</string>
 
-    <string name="label_hint">Hint (optional)</string>
-    <string name="helper_hint">Keep it vague — this is stored in plain text</string>
+    <string name="label_hint">Hint</string>
+    <string name="helper_hint">This field is optional</string>
 
     <string name="label_interval_value">Every</string>
     <string name="label_interval_unit">Interval</string>
