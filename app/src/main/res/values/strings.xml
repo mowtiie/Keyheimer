@@ -56,10 +56,10 @@
     <string name="verify_done_button">Done</string>
     <string name="verify_reset_button">Reset / re-sync passphrase</string>
 
-    <string name="exact_alarm_permission_title">Allow exact reminders?</string>
-    <string name="exact_alarm_permission_message">Keyheimer uses exact alarms so reminders arrive on the day you picked, not \"sometime around then.\" You can allow it now, or continue with approximate timing — this can be changed later in Settings.</string>
-    <string name="exact_alarm_permission_positive">Open settings</string>
-    <string name="exact_alarm_permission_negative">Use inexact reminders</string>
+    <string name="exact_alarm_permission_title">Get reminders on time?</string>
+    <string name="exact_alarm_permission_message">Allow exact alarms so your reminders show up exactly when you set them, not just around then. You can change this later in Settings.</string>
+    <string name="exact_alarm_permission_positive">Allow</string>
+    <string name="exact_alarm_permission_negative">Not now</string>
 
     <string name="section_details">Details</string>
     <string name="section_passphrase">Passphrase</string>
