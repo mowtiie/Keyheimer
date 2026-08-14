@@ -74,8 +74,7 @@ public class SettingsActivity extends KeyheimerActivity {
                 (sharedPreferences, key) -> {
                     if (PreferenceKeys.KEY_THEME_MODE.equals(key)) {
                         ThemeUtil.applyNightMode(sharedPreferences);
-                    } else if (PreferenceKeys.KEY_THEME_CONTRAST.equals(key)
-                            || PreferenceKeys.KEY_DYNAMIC_COLOR.equals(key)) {
+                    } else if (PreferenceKeys.KEY_THEME_CONTRAST.equals(key) || PreferenceKeys.KEY_DYNAMIC_COLOR.equals(key)) {
                         requireActivity().recreate();
                     }
                 };

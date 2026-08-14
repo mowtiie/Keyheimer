@@ -46,8 +46,7 @@ public abstract class KeyheimerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (appliedContrastOverlay != ThemeUtil.resolveContrastThemeOverlay(prefs())
-                || appliedDynamicColor != ThemeUtil.isDynamicColorEnabled(prefs())) {
+        if (appliedContrastOverlay != ThemeUtil.resolveContrastThemeOverlay(prefs()) || appliedDynamicColor != ThemeUtil.isDynamicColorEnabled(prefs())) {
             recreate();
         }
     }

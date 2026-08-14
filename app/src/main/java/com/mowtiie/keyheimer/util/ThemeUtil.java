@@ -41,6 +41,6 @@ public final class ThemeUtil {
     }
 
     public static boolean isDynamicColorEnabled(SharedPreferences prefs) {
-        return prefs.getBoolean(PreferenceKeys.KEY_DYNAMIC_COLOR, false);
+        return prefs.getBoolean(PreferenceKeys.KEY_DYNAMIC_COLOR, true);
     }
 }
