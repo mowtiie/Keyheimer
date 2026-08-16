@@ -38,6 +38,11 @@
         android:title="@string/preference_category_security"
         app:iconSpaceReserved="false">
 
+        <Preference
+            android:key="pref_app_lock"
+            android:title="@string/preference_app_lock_title"
+            app:iconSpaceReserved="false" />
+
         <SwitchPreferenceCompat
             android:key="pref_security_screen"
             android:title="@string/preference_switch_screen_privacy_title"
@@ -53,12 +58,6 @@
             app:widgetLayout="@layout/view_preference_switch"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
-
-        <Preference
-            android:key="pref_app_lock"
-            android:title="@string/preference_app_lock_title"
-            app:iconSpaceReserved="false" />
-
     </PreferenceCategory>
 
     <PreferenceCategory
