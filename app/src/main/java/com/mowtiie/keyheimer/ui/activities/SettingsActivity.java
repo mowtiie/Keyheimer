@@ -1,10 +1,7 @@
 package com.mowtiie.keyheimer.ui.activities;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,11 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.biometric.BiometricManager;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -231,7 +225,7 @@ public class SettingsActivity extends KeyheimerActivity {
             if (enabled) {
                 preference.setSummary(R.string.preference_notification_summary_enabled);
             } else {
-                preference.setIcon(R.drawable.ic_error);
+                preference.setIcon(R.drawable.ic_warning);
                 preference.setSummary(R.string.preference_notification_summary_disabled);
             }
         }
@@ -267,7 +261,7 @@ public class SettingsActivity extends KeyheimerActivity {
             if (allowed) {
                 preference.setSummary(R.string.preference_exact_alarms_summary_allowed);
             } else {
-                preference.setIcon(R.drawable.ic_error);
+                preference.setIcon(R.drawable.ic_warning);
                 preference.setSummary(R.string.preference_exact_alarms_summary_not_allowed);
             }
         }
