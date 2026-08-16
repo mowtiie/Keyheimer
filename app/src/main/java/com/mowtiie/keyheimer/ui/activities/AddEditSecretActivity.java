@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -60,13 +59,9 @@ public class AddEditSecretActivity extends KeyheimerActivity {
 
         dao = new SecretDao(this);
 
-        binding.toolbar.setTitle(editMode ? R.string.title_edit_secret : R.string.title_add_secret);
+        binding.toolbar.setTitle(editMode ? R.string.toolbar_edit : R.string.toolbar_create);
         binding.toolbar.setNavigationOnClickListener(v -> finish());
-
         setSupportActionBar(binding.toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
 
         setUpIntervalUnitDropdown();
         setUpReminderTimePicker();
@@ -97,7 +92,7 @@ public class AddEditSecretActivity extends KeyheimerActivity {
                 .setTimeFormat(clockFormat)
                 .setHour(selectedHour)
                 .setMinute(selectedMinute)
-                .setTitleText(R.string.reminder_time_picker_title)
+                .setTitleText(R.string.dialog_title_reminder_time)
                 .build();
         picker.addOnPositiveButtonClickListener(v -> {
             selectedHour = picker.getHour();
@@ -146,7 +141,7 @@ public class AddEditSecretActivity extends KeyheimerActivity {
         selectedMinute = secret.getReminderMinute();
         updateTimeDisplay();
         binding.switchActive.setChecked(secret.isActive());
-        binding.tilPassphrase.setHelperText(getString(R.string.helper_passphrase_edit));
+        binding.tilPassphrase.setHelperText(getString(R.string.field_passphrase_helper_edit));
         invalidateOptionsMenu();
     }
 
@@ -173,14 +168,14 @@ public class AddEditSecretActivity extends KeyheimerActivity {
     private void attemptSave() {
         String name = textOf(binding.inputName);
         if (name.isEmpty()) {
-            binding.tilName.setError(getString(R.string.error_name_required));
+            binding.tilName.setError(getString(R.string.field_error_name_required));
             return;
         }
         binding.tilName.setError(null);
 
         int intervalValue = parsePositiveInt(textOf(binding.inputIntervalValue));
         if (intervalValue <= 0) {
-            binding.tilIntervalValue.setError(getString(R.string.error_interval_value_required));
+            binding.tilIntervalValue.setError(getString(R.string.field_error_interval_value_required));
             return;
         }
         binding.tilIntervalValue.setError(null);
@@ -190,11 +185,11 @@ public class AddEditSecretActivity extends KeyheimerActivity {
         boolean changingPassphrase = passphrase.length > 0;
 
         if (!editMode && !changingPassphrase) {
-            binding.tilPassphrase.setError(getString(R.string.error_passphrase_required));
+            binding.tilPassphrase.setError(getString(R.string.field_error_passphrase_required));
             return;
         }
         if (changingPassphrase && !Arrays.equals(passphrase, confirmPassphrase)) {
-            binding.tilConfirmPassphrase.setError(getString(R.string.error_passphrase_mismatch));
+            binding.tilConfirmPassphrase.setError(getString(R.string.field_error_passphrase_mismatch));
             return;
         }
         binding.tilPassphrase.setError(null);
@@ -249,11 +244,10 @@ public class AddEditSecretActivity extends KeyheimerActivity {
 
     private void confirmDelete() {
         new MaterialAlertDialogBuilder(this)
-                .setIcon(R.drawable.ic_delete)
-                .setTitle(getString(R.string.delete_confirm_title, existingSecret.getName()))
-                .setMessage(R.string.delete_confirm_message)
-                .setPositiveButton(R.string.delete_confirm_positive, (dialog, which) -> deleteSecret())
-                .setNegativeButton(R.string.delete_confirm_negative, null)
+                .setTitle(getString(R.string.dialog_title_delete_secret, existingSecret.getName()))
+                .setMessage(R.string.dialog_message_delete_secret)
+                .setPositiveButton(R.string.dialog_button_delete, (dialog, which) -> deleteSecret())
+                .setNegativeButton(R.string.dialog_button_cancel, null)
                 .show();
     }
 

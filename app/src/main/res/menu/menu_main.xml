@@ -5,14 +5,14 @@
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
-        android:title="@string/action_search"
+        android:title="@string/menu_item_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
     <item
         android:id="@+id/action_sort"
         android:icon="@drawable/ic_sort"
-        android:title="@string/action_sort"
+        android:title="@string/menu_item_sort"
         app:showAsAction="ifRoom">
         <menu>
             <group
@@ -20,22 +20,22 @@
                 android:checkableBehavior="single">
                 <item
                     android:id="@+id/sort_name_asc"
-                    android:title="@string/sort_name_asc" />
+                    android:title="@string/menu_item_sort_name_asc" />
                 <item
                     android:id="@+id/sort_name_desc"
-                    android:title="@string/sort_name_desc" />
+                    android:title="@string/menu_item_sort_name_desc" />
                 <item
                     android:id="@+id/sort_updated_desc"
-                    android:title="@string/sort_updated_desc" />
+                    android:title="@string/menu_item_sort_updated_desc" />
                 <item
                     android:id="@+id/sort_updated_asc"
-                    android:title="@string/sort_updated_asc" />
+                    android:title="@string/menu_item_sort_updated_asc" />
                 <item
                     android:id="@+id/sort_created_desc"
-                    android:title="@string/sort_created_desc" />
+                    android:title="@string/menu_item_sort_created_desc" />
                 <item
                     android:id="@+id/sort_created_asc"
-                    android:title="@string/sort_created_asc" />
+                    android:title="@string/menu_item_sort_created_asc" />
             </group>
         </menu>
     </item>
@@ -43,16 +43,10 @@
     <item
         android:id="@+id/action_lock_now"
         android:icon="@drawable/ic_lock"
-        android:title="@string/action_lock_now"
+        android:title="@string/menu_item_lock_now"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_about"
-        android:title="@string/action_about"
-        app:showAsAction="never" />
+        android:title="@string/menu_item_settings"/>
 </menu>

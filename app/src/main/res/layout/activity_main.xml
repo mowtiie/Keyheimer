@@ -13,11 +13,11 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
-            style="@style/Widget.Keyheimer.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:title="@string/app_name" />
-
+            style="@style/Widget.Keyheimer.Toolbar"
+            app:titleTextColor="?attr/colorOnSurface"
+            app:title="@string/toolbar_main" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -41,7 +41,7 @@
             android:id="@+id/text_empty_kaomoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/empty_state_kaomoji"
+            android:text="@string/empty_indicator_kaomoji"
             android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -49,9 +49,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/empty_state_message"
+            android:text="@string/empty_indicator_main"
             android:textAppearance="?attr/textAppearanceBodyLarge" />
-
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -60,8 +59,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        app:layout_behavior="com.google.android.material.behavior.HideViewOnScrollBehavior"
-        android:contentDescription="@string/add_secret"/>
-
+        android:contentDescription="@string/tooltip_add_secret"
+        app:srcCompat="@android:drawable/ic_input_add" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

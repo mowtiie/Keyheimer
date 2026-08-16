@@ -29,12 +29,12 @@ import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
 import com.mowtiie.keyheimer.databinding.ActivityMainBinding;
+import com.mowtiie.keyheimer.scheduling.AlarmReceiver;
 import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.ui.adapters.SecretAdapter;
 import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.AppLockManager;
-import com.mowtiie.keyheimer.util.CrashReporter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,21 +55,6 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
     private String currentQuery = "";
     private SortOption currentSort = SortOption.NAME_ASC;
 
-    private final ActivityResultLauncher<Intent> saveCrashLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() != RESULT_OK || result.getData() == null) return;
-                        android.net.Uri uri = result.getData().getData();
-                        if (uri == null) return;
-
-                        if (CrashReporter.writeReportToUri(this, uri)) {
-                            Toast.makeText(this, R.string.toast_crash_save_success, Toast.LENGTH_SHORT).show();
-                            CrashReporter.deleteReport(this);
-                        } else {
-                            Toast.makeText(this, R.string.toast_crash_save_failure, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
     private final ActivityResultLauncher<String> notificationPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
             });
@@ -89,16 +74,13 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
         adapter = new SecretAdapter(this);
         binding.recyclerSecrets.setAdapter(adapter);
 
-        binding.fabAddSecret.setOnClickListener(v -> startActivity(new Intent(this, AddEditSecretActivity.class)));
+        binding.fabAddSecret.setOnClickListener(v ->
+                startActivity(new Intent(this, AddEditSecretActivity.class)));
 
         setUpEdgeToEdgeInsets();
         requestNotificationPermissionIfNeeded();
         requestExactAlarmPermissionIfNeeded();
         handleVerifyIntent(getIntent());
-
-        if (savedInstanceState == null) {
-            CrashReporter.showDialogIfPending(this, saveCrashLauncher);
-        }
     }
 
     @Override
@@ -136,14 +118,14 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
         }
         new MaterialAlertDialogBuilder(this)
                 .setIcon(R.drawable.ic_alarm)
-                .setTitle(R.string.exact_alarm_permission_title)
-                .setMessage(R.string.exact_alarm_permission_message)
-                .setPositiveButton(R.string.exact_alarm_permission_positive, (dialog, which) -> {
+                .setTitle(R.string.dialog_title_request_alarm_permission)
+                .setMessage(R.string.dialog_message_request_alarm_permission)
+                .setPositiveButton(R.string.dialog_button_grant, (dialog, which) -> {
                     Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                     intent.setData(Uri.parse("package:" + getPackageName()));
                     startActivity(intent);
                 })
-                .setNegativeButton(R.string.exact_alarm_permission_negative, null)
+                .setNegativeButton(R.string.dialog_button_dismiss, null)
                 .show();
     }
 
@@ -159,7 +141,8 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
 
             binding.recyclerSecrets.setPadding(bars.left, 0, bars.right, listBasePadding + bars.bottom);
 
-            ViewGroup.MarginLayoutParams fabParams = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+            ViewGroup.MarginLayoutParams fabParams =
+                    (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
             fabParams.leftMargin = fabBaseMargin + bars.left;
             fabParams.rightMargin = fabBaseMargin + bars.right;
             fabParams.bottomMargin = fabBaseMargin + bars.bottom;
@@ -200,7 +183,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
 
         if (visible.isEmpty()) {
             binding.textEmptyState.setText(
-                    allSecrets.isEmpty() ? R.string.empty_state_message : R.string.search_empty_state);
+                    allSecrets.isEmpty() ? R.string.empty_indicator_main : R.string.empty_indicator_search);
             binding.emptyStateContainer.setVisibility(View.VISIBLE);
         } else {
             binding.emptyStateContainer.setVisibility(View.GONE);
@@ -235,7 +218,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setQueryHint(getString(R.string.search_hint));
+        searchView.setQueryHint(getString(R.string.menu_item_search_hint));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -265,16 +248,10 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_about) {
-            startActivity(new Intent(this, AboutActivity.class));
-            return true;
-        }
-
         if (item.getItemId() == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
-
         if (item.getItemId() == R.id.action_lock_now) {
             AppLockManager.getInstance().markLocked();
             startActivity(new Intent(this, LockActivity.class));

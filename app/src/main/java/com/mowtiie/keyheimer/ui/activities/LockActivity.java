@@ -72,8 +72,8 @@ public class LockActivity extends KeyheimerActivity {
 
     private void showBiometricPrompt() {
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle(getString(R.string.lock_biometric_prompt_title))
-                .setNegativeButtonText(getString(hasPassword ? R.string.lock_use_password_instead : R.string.delete_confirm_negative))
+                .setTitle(getString(R.string.dialog_title_biometric_prompt))
+                .setNegativeButtonText(getString(hasPassword ? R.string.dialog_button_use_password : R.string.dialog_button_cancel))
                 .build();
 
         BiometricPrompt prompt = new BiometricPrompt(this, ContextCompat.getMainExecutor(this),
@@ -93,7 +93,7 @@ public class LockActivity extends KeyheimerActivity {
         if (matches) {
             unlock();
         } else {
-            binding.tilPassword.setError(getString(R.string.lock_password_error));
+            binding.tilPassword.setError(getString(R.string.field_error_lock_password));
             binding.inputPassword.setText(null);
         }
     }

@@ -16,7 +16,7 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
-            app:title="@string/title_about"
+            app:title="@string/toolbar_about"
             app:titleTextColor="?attr/colorOnSurface"
             style="@style/Widget.Keyheimer.Toolbar"
             android:layout_width="match_parent"

@@ -1,132 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Keyheimer</string>
-    <string name="app_easter_egg">You\'ve done this before, haven\'t you?</string>
-    <string name="app_license">GNU General Public License v3.0</string>
     <string name="app_author">mowtiie</string>
+    <string name="app_easter_egg">(─‿‿─)</string>
+    <string name="app_license">GNU General Public License v3.0</string>
 
-    <string name="empty_state_kaomoji">( ・_・)</string>
-    <string name="empty_state_message">No secrets yet. Tap + to add one.</string>
-    <string name="add_secret">Add secret</string>
-    <string name="verify_now">Verify now</string>
+    <string name="toolbar_main">Keyheimer</string>
+    <string name="toolbar_create">Add secret</string>
+    <string name="toolbar_edit">Edit secret</string>
+    <string name="toolbar_settings">Settings</string>
+    <string name="toolbar_about">About</string>
 
-    <string name="title_add_secret">Add secret</string>
-    <string name="title_edit_secret">Edit secret</string>
-
-    <string name="title_about">About</string>
-    <string name="action_about">About</string>
-
-    <string name="dialog_button_close">Close</string>
-
-    <string name="label_name">Secret name</string>
-    <string name="helper_name">e.g. Password manager master password</string>
-
-    <string name="label_passphrase">Passphrase</string>
-    <string name="helper_passphrase_add">What you\'d actually type to unlock it</string>
-    <string name="helper_passphrase_edit">Leave blank to keep the current passphrase</string>
-
-    <string name="label_confirm_passphrase">Confirm passphrase</string>
-    <string name="helper_confirm_passphrase">Re-enter to confirm</string>
-
-    <string name="label_hint">Hint</string>
-    <string name="helper_hint">This field is optional</string>
-
-    <string name="label_interval_value">Every</string>
-    <string name="label_interval_unit">Interval</string>
-    <string name="label_active">Reminders active</string>
-    <string name="label_reminder_time">Reminder time</string>
-    <string name="reminder_time_picker_title">Set reminder time</string>
-
-    <string name="error_name_required">Name is required</string>
-    <string name="error_passphrase_required">Passphrase is required</string>
-    <string name="error_passphrase_mismatch">Passphrases don\'t match</string>
-    <string name="error_interval_value_required">Enter a number greater than 0</string>
-
-    <string name="action_save">Save</string>
-    <string name="action_delete">Delete</string>
-
-    <string name="delete_confirm_title">Delete \u201c%1$s\u201d?</string>
-    <string name="delete_confirm_message">This can\'t be undone — you\'ll lose its reminder schedule and history.</string>
-    <string name="delete_confirm_positive">Delete</string>
-    <string name="delete_confirm_negative">Cancel</string>
-
-    <string name="verify_button">Verify</string>
-    <string name="verify_error_message">That doesn\'t match. Try again, or reset this reminder.</string>
-    <string name="verify_success_message">You remembered it!</string>
-    <string name="verify_done_button">Done</string>
-    <string name="verify_reset_button">Reset / re-sync passphrase</string>
-
-    <string name="exact_alarm_permission_title">Get reminders on time?</string>
-    <string name="exact_alarm_permission_message">Allow exact alarms so your reminders show up exactly when you set them, not just around then. You can change this later in Settings.</string>
-    <string name="exact_alarm_permission_positive">Allow</string>
-    <string name="exact_alarm_permission_negative">Not now</string>
+    <string name="empty_indicator_kaomoji">( ・_・)</string>
+    <string name="empty_indicator_main">No secrets yet. Tap + to add one.</string>
+    <string name="empty_indicator_search">No secrets match your search.</string>
 
     <string name="section_details">Details</string>
     <string name="section_passphrase">Passphrase</string>
     <string name="section_schedule">Reminder schedule</string>
 
-    <string name="action_search">Search</string>
-    <string name="search_hint">Search secrets</string>
-    <string name="search_empty_state">No secrets match your search.</string>
-    <string name="action_sort">Sort</string>
-    <string name="sort_name_asc">Name (A\u2013Z)</string>
-    <string name="sort_name_desc">Name (Z\u2013A)</string>
-    <string name="sort_updated_desc">Recently updated</string>
-    <string name="sort_updated_asc">Oldest updated</string>
-    <string name="sort_created_desc">Recently created</string>
-    <string name="sort_created_asc">Oldest created</string>
+    <string name="field_secret_name">Secret name</string>
+    <string name="field_secret_name_helper">e.g. Password manager master password</string>
+    <string name="field_passphrase">Passphrase</string>
+    <string name="field_passphrase_helper_add">What you\'d actually type to unlock it</string>
+    <string name="field_passphrase_helper_edit">Leave blank to keep the current passphrase</string>
+    <string name="field_passphrase_confirm">Confirm passphrase</string>
+    <string name="field_passphrase_confirm_helper">Re-enter to confirm</string>
+    <string name="field_hint">Hint (optional)</string>
+    <string name="field_hint_helper">Keep it vague — this is stored in plain text</string>
+    <string name="field_interval_value">Every</string>
+    <string name="field_interval_unit">Interval</string>
+    <string name="field_active">Reminders active</string>
+    <string name="field_reminder_time">Reminder time</string>
+    <string name="field_password">Password</string>
+    <string name="field_password_helper">At least 6 characters</string>
+    <string name="field_password_confirm">Confirm password</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="title_settings">Settings</string>
+    <string name="field_error_name_required">Name is required</string>
+    <string name="field_error_passphrase_required">Passphrase is required</string>
+    <string name="field_error_passphrase_mismatch">Passphrases don\'t match</string>
+    <string name="field_error_interval_value_required">Enter a number greater than 0</string>
+    <string name="field_error_verify_passphrase">That doesn\'t match. Try again, or reset this reminder.</string>
+    <string name="field_error_password_length">Enter at least 6 characters</string>
+    <string name="field_error_password_mismatch">Passwords don\'t match</string>
+    <string name="field_error_lock_password">Incorrect password</string>
 
-    <string name="settings_category_theme">Theme</string>
-    <string name="settings_theme_mode_title">Theme</string>
-    <string name="settings_theme_contrast_title">Contrast</string>
-    <string name="settings_dynamic_color_title">Dynamic color</string>
-    <string name="settings_dynamic_color_summary">Match the app\'s colors to your wallpaper</string>
-    <string name="settings_dynamic_color_unsupported">Not supported on this device</string>
-
-    <string name="settings_category_security">Security</string>
-    <string name="settings_security_screen_title">Security screen</string>
-    <string name="settings_security_screen_summary">Block screenshots and screen recording</string>
-    <string name="settings_biometric_title">Biometric unlock</string>
-    <string name="settings_biometric_summary">Use your fingerprint or face to unlock</string>
-    <string name="settings_biometric_unsupported">Not available on this device</string>
-    <string name="settings_app_lock_title">App lock</string>
-    <string name="settings_app_lock_summary_unset">Not set</string>
-    <string name="settings_app_lock_summary_set">Password set</string>
-
-    <string name="settings_app_lock_dialog_title">Set app lock password</string>
-    <string name="settings_app_lock_dialog_save">Save</string>
-    <string name="settings_app_lock_dialog_remove">Remove</string>
-    <string name="settings_app_lock_password_label">Password</string>
-    <string name="settings_app_lock_password_helper">At least 6 characters</string>
-    <string name="settings_app_lock_error_length">Enter at least 6 characters</string>
-
-    <string name="action_lock_now">Lock</string>
-
-    <string name="settings_category_reminders">Reminders</string>
-    <string name="settings_exact_alarms_title">Exact alarms</string>
-    <string name="settings_exact_alarms_summary_allowed">Allowed — reminders arrive on time</string>
-    <string name="settings_exact_alarms_summary_not_allowed">Not allowed — reminders may be delayed. Tap to enable.</string>
-    <string name="settings_exact_alarms_summary_not_needed">Not needed on this Android version</string>
-
-    <string name="lock_title">Locked</string>
-    <string name="lock_unlock_button">Unlock</string>
-    <string name="lock_use_biometric_button">Use biometric</string>
-    <string name="lock_biometric_prompt_title">Unlock Keyheimer</string>
-    <string name="lock_use_password_instead">Use password</string>
-    <string name="lock_password_error">Incorrect password</string>
-
-    <string name="dialog_title_crash">App has crashed</string>
-    <string name="dialog_message_crash">The app closed unexpectedly last time. A technical report was saved on this device — none of your data is included. You can copy or export it to share with the developer, or dismiss it.</string>
     <string name="crash_action_copy">Copy to clipboard</string>
     <string name="crash_action_export">Export to file</string>
     <string name="crash_action_dismiss">Dismiss</string>
-    <string name="crash_clip_label">Dearest crash report</string>
+    <string name="crash_clip_label">Keyheimer crash report</string>
+
+    <string name="dialog_title_crash">App has crashed</string>
+    <string name="dialog_title_reminder_time">Set reminder time</string>
+    <string name="dialog_title_delete_secret">Delete \u201c%1$s\u201d?</string>
+    <string name="dialog_message_delete_secret">This can\'t be undone — you\'ll lose its reminder schedule and history.</string>
+    <string name="dialog_title_request_alarm_permission">Get reminders on time?</string>
+    <string name="dialog_message_request_alarm_permission">Allow exact alarms so your reminders show up exactly when you set them, not just around then. You can change this later in Settings.</string>
+    <string name="dialog_title_app_lock">Set app lock password</string>
+    <string name="dialog_message_app_lock">This password locks the app itself — separate from any secret\'s passphrase. Don\'t forget it, there\'s no way to recover it.</string>
+    <string name="dialog_title_biometric_prompt">Unlock Keyheimer</string>
+    <string name="dialog_message_verify_success">You remembered it!</string>
+
+    <string name="dialog_message_crash">The app closed unexpectedly last time. You can copy or export it to share with the developer, or dismiss it.</string>
+    <string name="dialog_button_delete">Delete</string>
+    <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_verify">Verify</string>
+    <string name="dialog_button_done">Done</string>
+    <string name="dialog_button_reset_passphrase">Reset / re-sync passphrase</string>
+    <string name="dialog_button_grant">Allow</string>
+    <string name="dialog_button_dismiss">Not now</string>
+    <string name="dialog_button_save">Save</string>
+    <string name="dialog_button_remove">Remove</string>
+    <string name="dialog_button_unlock">Unlock</string>
+    <string name="dialog_button_use_password">Use password</string>
+    <string name="dialog_button_close">Close</string>
+
+    <string name="menu_item_save">Save</string>
+    <string name="menu_item_delete">Delete</string>
+    <string name="menu_item_search">Search</string>
+    <string name="menu_item_search_hint">Search secrets</string>
+    <string name="menu_item_sort">Sort</string>
+    <string name="menu_item_sort_name_asc">Name (A\u2013Z)</string>
+    <string name="menu_item_sort_name_desc">Name (Z\u2013A)</string>
+    <string name="menu_item_sort_updated_desc">Recently updated</string>
+    <string name="menu_item_sort_updated_asc">Oldest updated</string>
+    <string name="menu_item_sort_created_desc">Recently created</string>
+    <string name="menu_item_sort_created_asc">Oldest created</string>
+    <string name="menu_item_settings">Settings</string>
+    <string name="menu_item_lock_now">Lock</string>
+
+    <string name="tooltip_add_secret">Add secret</string>
+    <string name="tooltip_verify">Verify now</string>
+    <string name="tooltip_debug_fire">Fire reminder now (debug)</string>
+
     <string name="toast_crash_copy_success">Crash report copied to clipboard</string>
     <string name="toast_crash_save_success">Crash report saved</string>
     <string name="toast_crash_save_failure">Couldn\'t save the crash report</string>
+    <string name="toast_debug_fired">Fired: %1$s</string>
+
+    <string name="preference_category_theme">Theme</string>
+    <string name="preference_list_theme">Theme</string>
+    <string name="preference_list_contrast">Contrast</string>
+    <string name="preference_switch_dynamic_colors_title">Dynamic color</string>
+    <string name="preference_switch_dynamic_colors_summary">Match the app\'s colors to your wallpaper</string>
+    <string name="preference_switch_dynamic_colors_summary_unsupported">Not supported on this device</string>
+
+    <string name="preference_category_security">Security</string>
+    <string name="preference_switch_screen_privacy_title">Security screen</string>
+    <string name="preference_switch_screen_privacy_summary">Block screenshots and screen recording</string>
+    <string name="preference_switch_biometric_title">Biometric unlock</string>
+    <string name="preference_switch_biometric_summary">Use your fingerprint or face to unlock</string>
+    <string name="preference_switch_biometric_summary_unsupported">Not available on this device</string>
+    <string name="preference_app_lock_title">App lock</string>
+    <string name="preference_app_lock_summary_unset">Not set</string>
+    <string name="preference_app_lock_summary_set">Password set</string>
+
+    <string name="preference_category_reminders">Reminders</string>
+    <string name="preference_exact_alarms_title">Exact alarms</string>
+    <string name="preference_exact_alarms_summary_allowed">Allowed — reminders arrive on time</string>
+    <string name="preference_exact_alarms_summary_not_allowed">Not allowed — reminders may be delayed. Tap to enable.</string>
+    <string name="preference_exact_alarms_summary_not_needed">Not needed on this Android version</string>
 
     <string name="preference_support_title">Support the developer</string>
     <string name="preference_support_summary">If you enjoy using Keyheimer, you can support its development</string>
@@ -136,4 +129,7 @@
     <string name="preference_app_source_code_title">Source Code</string>
     <string name="preference_app_source_code_summary">Check the Github repository and the README</string>
     <string name="preference_app_author">Author</string>
+
+    <string name="lock_screen_title">Locked</string>
+    <string name="lock_screen_use_biometric_button">Use biometric</string>
 </resources>

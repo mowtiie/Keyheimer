@@ -30,6 +30,7 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
 
     private static final String ARG_SECRET_ID = "secret_id";
     private static final int FAILURES_BEFORE_RESET_OPTION = 3;
+    private static final long SUCCESS_AUTO_CLOSE_DELAY_MS = 1500L;
 
     public static VerifySecretBottomSheet newInstance(String secretId) {
         VerifySecretBottomSheet sheet = new VerifySecretBottomSheet();
@@ -56,7 +57,8 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         binding = BottomSheetVerifySecretBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -97,7 +99,7 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
         }
         char[] attempt = charsOf(binding.inputPassphrase.getText());
         if (attempt.length == 0) {
-            binding.tilPassphrase.setError(getString(R.string.error_passphrase_required));
+            binding.tilPassphrase.setError(getString(R.string.field_error_passphrase_required));
             return;
         }
         binding.tilPassphrase.setError(null);
@@ -120,7 +122,9 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void onVerifySuccess() {
-        long nextTriggerAt = IntervalConverter.computeNextTriggerAt(secret.getIntervalValue(), secret.getIntervalUnit(), secret.getReminderHour(), secret.getReminderMinute());
+        long nextTriggerAt = IntervalConverter.computeNextTriggerAt(
+                secret.getIntervalValue(), secret.getIntervalUnit(),
+                secret.getReminderHour(), secret.getReminderMinute());
         String secretId = secret.getId();
 
         AppExecutors.getInstance().diskIO().execute(() -> {
@@ -138,15 +142,17 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
     private void showSuccessState() {
         binding.groupInput.setVisibility(View.GONE);
         binding.groupSuccess.setVisibility(View.VISIBLE);
+        autoCloseHandler.postDelayed(autoCloseRunnable, SUCCESS_AUTO_CLOSE_DELAY_MS);
     }
 
     private void onVerifyFailure() {
         failureCount++;
         binding.inputPassphrase.setText(null);
-        binding.tilPassphrase.setError(getString(R.string.verify_error_message));
+        binding.tilPassphrase.setError(getString(R.string.field_error_verify_passphrase));
         binding.inputPassphrase.requestFocus();
 
-        AppExecutors.getInstance().diskIO().execute(() -> dao.updateVerificationResult(secret.getId(), false, secret.getNextTriggerAt()));
+        AppExecutors.getInstance().diskIO().execute(() ->
+                dao.updateVerificationResult(secret.getId(), false, secret.getNextTriggerAt()));
 
         if (failureCount >= FAILURES_BEFORE_RESET_OPTION) {
             binding.buttonResetPassphrase.setVisibility(View.VISIBLE);

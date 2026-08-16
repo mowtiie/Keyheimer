@@ -45,6 +45,9 @@ public class SettingsActivity extends KeyheimerActivity {
         binding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.toolbar.setTitle(R.string.toolbar_settings);
+        binding.toolbar.setNavigationOnClickListener(v -> finish());
+
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -74,7 +77,8 @@ public class SettingsActivity extends KeyheimerActivity {
                 (sharedPreferences, key) -> {
                     if (PreferenceKeys.KEY_THEME_MODE.equals(key)) {
                         ThemeUtil.applyNightMode(sharedPreferences);
-                    } else if (PreferenceKeys.KEY_THEME_CONTRAST.equals(key) || PreferenceKeys.KEY_DYNAMIC_COLOR.equals(key)) {
+                    } else if (PreferenceKeys.KEY_THEME_CONTRAST.equals(key)
+                            || PreferenceKeys.KEY_DYNAMIC_COLOR.equals(key)) {
                         requireActivity().recreate();
                     }
                 };
@@ -109,7 +113,7 @@ public class SettingsActivity extends KeyheimerActivity {
             if (!DynamicColors.isDynamicColorAvailable()) {
                 preference.setEnabled(false);
                 preference.setChecked(false);
-                preference.setSummary(R.string.settings_dynamic_color_unsupported);
+                preference.setSummary(R.string.preference_switch_dynamic_colors_summary_unsupported);
             }
         }
 
@@ -123,7 +127,7 @@ public class SettingsActivity extends KeyheimerActivity {
             if (canAuthenticate != BiometricManager.BIOMETRIC_SUCCESS) {
                 preference.setEnabled(false);
                 preference.setChecked(false);
-                preference.setSummary(R.string.settings_biometric_unsupported);
+                preference.setSummary(R.string.preference_switch_biometric_summary_unsupported);
             }
         }
 
@@ -142,24 +146,26 @@ public class SettingsActivity extends KeyheimerActivity {
         private void updateAppLockSummary(Preference preference) {
             boolean hasPassword = !currentPasswordHash().isEmpty();
             preference.setSummary(hasPassword
-                    ? R.string.settings_app_lock_summary_set
-                    : R.string.settings_app_lock_summary_unset);
+                    ? R.string.preference_app_lock_summary_set
+                    : R.string.preference_app_lock_summary_unset);
         }
 
         private void showAppLockDialog(Preference preference) {
             View dialogView = LayoutInflater.from(requireContext())
                     .inflate(R.layout.dialog_app_lock_password, null);
             TextInputEditText passwordInput = dialogView.findViewById(R.id.input_app_lock_password);
+            TextInputEditText confirmInput = dialogView.findViewById(R.id.input_app_lock_password_confirm);
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
                     .setIcon(R.drawable.ic_lock)
-                    .setTitle(R.string.settings_app_lock_dialog_title)
+                    .setTitle(R.string.dialog_title_app_lock)
+                    .setMessage(R.string.dialog_message_app_lock)
                     .setView(dialogView)
-                    .setPositiveButton(R.string.settings_app_lock_dialog_save, null)
-                    .setNegativeButton(R.string.delete_confirm_negative, null);
+                    .setPositiveButton(R.string.dialog_button_save, null)
+                    .setNegativeButton(R.string.dialog_button_cancel, null);
 
             if (!currentPasswordHash().isEmpty()) {
-                builder.setNeutralButton(R.string.settings_app_lock_dialog_remove, (dialog, which) -> {
+                builder.setNeutralButton(R.string.dialog_button_remove, (dialog, which) -> {
                     clearPassword();
                     updateAppLockSummary(preference);
                 });
@@ -168,12 +174,23 @@ public class SettingsActivity extends KeyheimerActivity {
             AlertDialog dialog = builder.show();
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                 char[] password = charsOf(passwordInput.getText());
+                char[] confirmPassword = charsOf(confirmInput.getText());
+
                 if (password.length < 6) {
-                    passwordInput.setError(getString(R.string.settings_app_lock_error_length));
+                    passwordInput.setError(getString(R.string.field_error_password_length));
+                    Arrays.fill(confirmPassword, '\0');
                     return;
                 }
+                if (!Arrays.equals(password, confirmPassword)) {
+                    confirmInput.setError(getString(R.string.field_error_password_mismatch));
+                    Arrays.fill(password, '\0');
+                    Arrays.fill(confirmPassword, '\0');
+                    return;
+                }
+
                 savePassword(password);
                 Arrays.fill(password, '\0');
+                Arrays.fill(confirmPassword, '\0');
                 dialog.dismiss();
                 updateAppLockSummary(preference);
             });
@@ -186,10 +203,9 @@ public class SettingsActivity extends KeyheimerActivity {
             }
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 preference.setEnabled(false);
-                preference.setSummary(R.string.settings_exact_alarms_summary_not_needed);
+                preference.setSummary(R.string.preference_exact_alarms_summary_not_needed);
                 return;
             }
-
             preference.setOnPreferenceClickListener(clicked -> {
                 Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                 intent.setData(Uri.parse("package:" + requireContext().getPackageName()));
@@ -209,8 +225,8 @@ public class SettingsActivity extends KeyheimerActivity {
             }
             boolean allowed = ReminderScheduler.canScheduleExactAlarms(requireContext());
             preference.setSummary(allowed
-                    ? R.string.settings_exact_alarms_summary_allowed
-                    : R.string.settings_exact_alarms_summary_not_allowed);
+                    ? R.string.preference_exact_alarms_summary_allowed
+                    : R.string.preference_exact_alarms_summary_not_allowed);
         }
 
         private SharedPreferences prefs() {
@@ -244,7 +260,6 @@ public class SettingsActivity extends KeyheimerActivity {
             if (editable == null || editable.length() == 0) {
                 return new char[0];
             }
-
             char[] chars = new char[editable.length()];
             editable.getChars(0, editable.length(), chars, 0);
             return chars;

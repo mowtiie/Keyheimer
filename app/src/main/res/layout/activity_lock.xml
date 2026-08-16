@@ -14,8 +14,8 @@
         android:padding="32dp">
 
         <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_lock" />
 
@@ -23,8 +23,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/lock_title"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+            android:fontFamily="serif"
+            android:text="@string/lock_screen_title"
+            android:textAppearance="?attr/textAppearanceDisplaySmall" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_password"
@@ -32,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:hint="@string/settings_app_lock_password_label"
+            android:hint="@string/field_password"
             app:endIconMode="password_toggle">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -48,14 +49,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/lock_unlock_button" />
+            android:text="@string/dialog_button_unlock" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_use_biometric"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/lock_use_biometric_button" />
+            app:iconGravity="textEnd"
+            android:text="@string/lock_screen_use_biometric_button" />
     </LinearLayout>
 </FrameLayout>
