@@ -26,8 +26,8 @@
     <string name="field_passphrase_helper_edit">Leave blank to keep the current passphrase</string>
     <string name="field_passphrase_confirm">Confirm passphrase</string>
     <string name="field_passphrase_confirm_helper">Re-enter to confirm</string>
-    <string name="field_hint">Hint (optional)</string>
-    <string name="field_hint_helper">Keep it vague — this is stored in plain text</string>
+    <string name="field_hint">Hint</string>
+    <string name="field_hint_helper">Having a hint is optional</string>
     <string name="field_interval_value">Every</string>
     <string name="field_interval_unit">Interval</string>
     <string name="field_active">Reminders active</string>
