@@ -40,8 +40,8 @@ public final class NotificationHelper {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification_keyheimer)
-                .setContentTitle("Time to recall " + secret.getName())
-                .setContentText("Tap to verify you still remember it")
+                .setContentTitle(context.getString(R.string.notification_recall_title))
+                .setContentText(String.format(context.getString(R.string.notification_recall_content), secret.getName()))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent);

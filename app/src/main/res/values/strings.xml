@@ -19,6 +19,9 @@
     <string name="section_passphrase">Passphrase</string>
     <string name="section_schedule">Reminder schedule</string>
 
+    <string name="notification_recall_title">Recall passphrase</string>
+    <string name="notification_recall_content">Tap to verify if you still remember the passphrase for %s.</string>
+
     <string name="field_secret_name">Secret name</string>
     <string name="field_secret_name_helper">e.g. Password manager master password</string>
     <string name="field_passphrase">Passphrase</string>
