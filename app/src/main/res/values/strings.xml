@@ -53,15 +53,16 @@
     <string name="dialog_title_crash">App has crashed</string>
     <string name="dialog_title_reminder_time">Set reminder time</string>
     <string name="dialog_title_delete_secret">Delete \u201c%1$s\u201d?</string>
-    <string name="dialog_message_delete_secret">This can\'t be undone — you\'ll lose its reminder schedule and history.</string>
     <string name="dialog_title_request_alarm_permission">Get reminders on time?</string>
-    <string name="dialog_message_request_alarm_permission">Allow exact alarms so your reminders show up exactly when you set them, not just around then. You can change this later in Settings.</string>
-    <string name="dialog_title_app_lock">Set app lock password</string>
-    <string name="dialog_message_app_lock">This password locks the app itself — separate from any secret\'s passphrase. Don\'t forget it, there\'s no way to recover it.</string>
+    <string name="dialog_title_app_lock">Set app lock</string>
     <string name="dialog_title_biometric_prompt">Unlock Keyheimer</string>
-    <string name="dialog_message_verify_success">You remembered it!</string>
 
+    <string name="dialog_message_delete_secret">This can\'t be undone — you\'ll lose its reminder schedule and history.</string>
     <string name="dialog_message_crash">The app closed unexpectedly last time. You can copy or export it to share with the developer, or dismiss it.</string>
+    <string name="dialog_message_verify_success">You remembered it!</string>
+    <string name="dialog_message_app_lock">This password locks the app itself — separate from any secret\'s passphrase. Don\'t forget it, there\'s no way to recover it.</string>
+    <string name="dialog_message_request_alarm_permission">Allow exact alarms so your reminders show up exactly when you set them, not just around then. You can change this later in Settings.</string>
+
     <string name="dialog_button_delete">Delete</string>
     <string name="dialog_button_cancel">Cancel</string>
     <string name="dialog_button_verify">Verify</string>
@@ -91,12 +92,10 @@
 
     <string name="tooltip_add_secret">Add secret</string>
     <string name="tooltip_verify">Verify now</string>
-    <string name="tooltip_debug_fire">Fire reminder now (debug)</string>
 
     <string name="toast_crash_copy_success">Crash report copied to clipboard</string>
     <string name="toast_crash_save_success">Crash report saved</string>
     <string name="toast_crash_save_failure">Couldn\'t save the crash report</string>
-    <string name="toast_debug_fired">Fired: %1$s</string>
 
     <string name="preference_category_theme">Theme</string>
     <string name="preference_list_theme">Theme</string>

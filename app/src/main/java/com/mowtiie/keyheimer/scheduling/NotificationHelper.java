@@ -35,7 +35,7 @@ final class NotificationHelper {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification_keyheimer)
-                .setContentTitle("Time to recall: " + secret.getName())
+                .setContentTitle("Time to recall " + secret.getName())
                 .setContentText("Tap to verify you still remember it")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
@@ -48,11 +48,7 @@ final class NotificationHelper {
     private static void ensureChannel(Context context) {
         NotificationManager manager = context.getSystemService(NotificationManager.class);
         if (manager.getNotificationChannel(CHANNEL_ID) == null) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Passphrase reminders",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Passphrase reminders", NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription("Reminders to recall your stored passphrases");
             manager.createNotificationChannel(channel);
         }
