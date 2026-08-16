@@ -114,8 +114,11 @@
     <string name="preference_app_lock_summary_unset">Not set</string>
     <string name="preference_app_lock_summary_set">Password set</string>
 
-    <string name="preference_category_reminders">Reminders</string>
+    <string name="preference_category_permissions">Permissions</string>
     <string name="preference_exact_alarms_title">Exact alarms</string>
+    <string name="preference_notification_title">Notification</string>
+    <string name="preference_notification_summary_enabled">The app will alert you to verify secrets.</string>
+    <string name="preference_notification_summary_disabled">The app will not alert you of any secrets.</string>
     <string name="preference_exact_alarms_summary_allowed">Allowed — reminders arrive on time</string>
     <string name="preference_exact_alarms_summary_not_allowed">Not allowed — reminders may be delayed. Tap to enable.</string>
     <string name="preference_exact_alarms_summary_not_needed">Not needed on this Android version</string>

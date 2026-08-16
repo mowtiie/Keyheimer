@@ -1,7 +1,10 @@
 package com.mowtiie.keyheimer.ui.activities;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,8 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.biometric.BiometricManager;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,6 +33,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.databinding.ActivitySettingsBinding;
+import com.mowtiie.keyheimer.scheduling.NotificationHelper;
 import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
@@ -90,6 +97,7 @@ public class SettingsActivity extends KeyheimerActivity {
             setUpBiometricPreference();
             setUpAppLockPreference();
             setUpExactAlarmPreference();
+            setUpNotificationPreference();
         }
 
         @Override
@@ -196,6 +204,38 @@ public class SettingsActivity extends KeyheimerActivity {
             });
         }
 
+        private void setUpNotificationPreference() {
+            Preference preference = findPreference(PreferenceKeys.KEY_NOTIFICATIONS);
+            if (preference == null) {
+                return;
+            }
+
+            preference.setOnPreferenceClickListener(preference1 -> {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName());
+                startActivity(intent);
+                return true;
+            });
+
+            updateNotificationSummary();
+        }
+
+        private void updateNotificationSummary() {
+            Preference preference = findPreference(PreferenceKeys.KEY_NOTIFICATIONS);
+            if (preference == null) {
+                return;
+            }
+
+            boolean enabled = NotificationHelper.hasNotificationPermission(requireContext());
+            if (enabled) {
+                preference.setSummary(R.string.preference_notification_summary_enabled);
+            } else {
+                preference.setIcon(R.drawable.ic_error);
+                preference.setSummary(R.string.preference_notification_summary_disabled);
+            }
+        }
+
         private void setUpExactAlarmPreference() {
             Preference preference = findPreference(PreferenceKeys.KEY_EXACT_ALARMS);
             if (preference == null) {
@@ -224,9 +264,12 @@ public class SettingsActivity extends KeyheimerActivity {
                 return;
             }
             boolean allowed = ReminderScheduler.canScheduleExactAlarms(requireContext());
-            preference.setSummary(allowed
-                    ? R.string.preference_exact_alarms_summary_allowed
-                    : R.string.preference_exact_alarms_summary_not_allowed);
+            if (allowed) {
+                preference.setSummary(R.string.preference_exact_alarms_summary_allowed);
+            } else {
+                preference.setIcon(R.drawable.ic_error);
+                preference.setSummary(R.string.preference_exact_alarms_summary_not_allowed);
+            }
         }
 
         private SharedPreferences prefs() {

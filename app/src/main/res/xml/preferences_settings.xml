@@ -61,12 +61,17 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/preference_category_reminders"
+        android:title="@string/preference_category_permissions"
         app:iconSpaceReserved="false">
 
         <Preference
             android:key="pref_exact_alarms"
             app:iconSpaceReserved="false"
             android:title="@string/preference_exact_alarms_title" />
+
+        <Preference
+            android:key="pref_notifications"
+            app:iconSpaceReserved="false"
+            android:title="@string/preference_notification_title" />
     </PreferenceCategory>
 </PreferenceScreen>

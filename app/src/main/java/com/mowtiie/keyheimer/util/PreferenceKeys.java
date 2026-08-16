@@ -15,6 +15,7 @@ public final class PreferenceKeys {
     public static final String KEY_APP_LOCK_PASSWORD_SALT = "pref_app_lock_password_salt";
     public static final String KEY_APP_LOCK_PASSWORD_ITERATIONS = "pref_app_lock_password_iterations";
     public static final String KEY_EXACT_ALARMS = "pref_exact_alarms";
+    public static final String KEY_NOTIFICATIONS = "pref_notifications";
 
     public static final String THEME_MODE_LIGHT = "light";
     public static final String THEME_MODE_DARK = "dark";
