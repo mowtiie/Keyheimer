@@ -35,22 +35,24 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_empty_kaomoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/empty_indicator_kaomoji"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium" />
+            android:textColor="?attr/colorOnSurface"
+            android:textAppearance="?attr/textAppearanceHeadlineLarge" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_empty_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:text="@string/empty_indicator_main"
-            android:textAppearance="?attr/textAppearanceBodyLarge" />
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textAppearance="?attr/textAppearanceTitleSmall" />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -59,6 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="@string/tooltip_add_secret"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:src="@drawable/ic_add"
+        app:layout_behavior="com.google.android.material.behavior.HideViewOnScrollBehavior"
+        android:contentDescription="@string/tooltip_add_secret"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
