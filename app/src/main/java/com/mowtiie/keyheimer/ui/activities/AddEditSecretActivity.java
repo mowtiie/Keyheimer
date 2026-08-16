@@ -37,6 +37,7 @@ public class AddEditSecretActivity extends KeyheimerActivity {
     private static final Secret.IntervalUnit[] INTERVAL_UNITS = {
             Secret.IntervalUnit.DAY, Secret.IntervalUnit.WEEK, Secret.IntervalUnit.MONTH
     };
+
     private static final int DEFAULT_REMINDER_HOUR = 9;
     private static final int DEFAULT_REMINDER_MINUTE = 0;
 
@@ -61,7 +62,11 @@ public class AddEditSecretActivity extends KeyheimerActivity {
 
         binding.toolbar.setTitle(editMode ? R.string.toolbar_edit : R.string.toolbar_create);
         binding.toolbar.setNavigationOnClickListener(v -> finish());
+
         setSupportActionBar(binding.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         setUpIntervalUnitDropdown();
         setUpReminderTimePicker();
