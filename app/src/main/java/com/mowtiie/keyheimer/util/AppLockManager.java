@@ -76,22 +76,18 @@ public final class AppLockManager {
     }
 
     private long resolveTimeoutMillis(Context context) {
-        String value = prefs(context).getString(
-                PreferenceKeys.KEY_LOCK_TIMEOUT, PreferenceKeys.LOCK_TIMEOUT_1M);
-        if (PreferenceKeys.LOCK_TIMEOUT_NEVER.equals(value)) {
-            return -1L;
-        }
-        if (PreferenceKeys.LOCK_TIMEOUT_30S.equals(value)) {
-            return 30_000L;
-        }
-        if (PreferenceKeys.LOCK_TIMEOUT_1M.equals(value)) {
-            return 60_000L;
-        }
-        if (PreferenceKeys.LOCK_TIMEOUT_5M.equals(value)) {
-            return 5 * 60_000L;
-        }
-        if (PreferenceKeys.LOCK_TIMEOUT_15M.equals(value)) {
-            return 15 * 60_000L;
+        String value = prefs(context).getString(PreferenceKeys.KEY_LOCK_TIMEOUT, PreferenceKeys.LOCK_TIMEOUT_1M);
+        switch (value) {
+            case PreferenceKeys.LOCK_TIMEOUT_NEVER:
+                return -1L;
+            case PreferenceKeys.LOCK_TIMEOUT_30S:
+                return 30_000L;
+            case PreferenceKeys.LOCK_TIMEOUT_1M:
+                return 60_000L;
+            case PreferenceKeys.LOCK_TIMEOUT_5M:
+                return 5 * 60_000L;
+            case PreferenceKeys.LOCK_TIMEOUT_15M:
+                return 15 * 60_000L;
         }
         // LOCK_TIMEOUT_IMMEDIATELY, and the fallback for any unrecognized value.
         return 0L;
