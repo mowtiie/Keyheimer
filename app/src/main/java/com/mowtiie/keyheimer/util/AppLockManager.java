@@ -9,7 +9,10 @@ public final class AppLockManager {
 
     private static volatile AppLockManager instance;
 
-    private boolean locked = true;
+    // 0 means "never unlocked this process" (i.e. locked).
+    private long unlockedAtMillis = 0L;
+    // 0 means "not currently backgrounded" (still continuously foreground since last unlock).
+    private long backgroundedAtMillis = 0L;
 
     private AppLockManager() {
     }
@@ -27,10 +30,21 @@ public final class AppLockManager {
 
     public boolean isLockRequired(Context context) {
         if (!isLockConfigured(context)) {
-            locked = false;
+            unlockedAtMillis = System.currentTimeMillis();
+            backgroundedAtMillis = 0L;
             return false;
         }
-        return locked;
+        if (unlockedAtMillis == 0L) {
+            return true;
+        }
+        if (backgroundedAtMillis == 0L) {
+            return false;
+        }
+        long timeoutMillis = resolveTimeoutMillis(context);
+        if (timeoutMillis < 0) {
+            return false;
+        }
+        return System.currentTimeMillis() - backgroundedAtMillis >= timeoutMillis;
     }
 
     public boolean isLockConfigured(Context context) {
@@ -46,11 +60,41 @@ public final class AppLockManager {
     }
 
     public void markUnlocked() {
-        locked = false;
+        unlockedAtMillis = System.currentTimeMillis();
+        backgroundedAtMillis = 0L;
     }
 
+    /** Called when the whole app goes to background — starts the cooldown clock. */
     public void markLocked() {
-        locked = true;
+        backgroundedAtMillis = System.currentTimeMillis();
+    }
+
+    /** Forces a lock immediately, bypassing any cooldown — used by "Lock now". */
+    public void forceLock() {
+        unlockedAtMillis = 0L;
+        backgroundedAtMillis = 0L;
+    }
+
+    private long resolveTimeoutMillis(Context context) {
+        String value = prefs(context).getString(
+                PreferenceKeys.KEY_LOCK_TIMEOUT, PreferenceKeys.LOCK_TIMEOUT_1M);
+        if (PreferenceKeys.LOCK_TIMEOUT_NEVER.equals(value)) {
+            return -1L;
+        }
+        if (PreferenceKeys.LOCK_TIMEOUT_30S.equals(value)) {
+            return 30_000L;
+        }
+        if (PreferenceKeys.LOCK_TIMEOUT_1M.equals(value)) {
+            return 60_000L;
+        }
+        if (PreferenceKeys.LOCK_TIMEOUT_5M.equals(value)) {
+            return 5 * 60_000L;
+        }
+        if (PreferenceKeys.LOCK_TIMEOUT_15M.equals(value)) {
+            return 15 * 60_000L;
+        }
+        // LOCK_TIMEOUT_IMMEDIATELY, and the fallback for any unrecognized value.
+        return 0L;
     }
 
     private SharedPreferences prefs(Context context) {

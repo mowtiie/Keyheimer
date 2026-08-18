@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -29,7 +28,6 @@ import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
 import com.mowtiie.keyheimer.databinding.ActivityMainBinding;
-import com.mowtiie.keyheimer.scheduling.AlarmReceiver;
 import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.ui.adapters.SecretAdapter;
 import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
@@ -253,7 +251,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
             return true;
         }
         if (item.getItemId() == R.id.action_lock_now) {
-            AppLockManager.getInstance().markLocked();
+            AppLockManager.getInstance().forceLock();
             startActivity(new Intent(this, LockActivity.class));
             return true;
         }

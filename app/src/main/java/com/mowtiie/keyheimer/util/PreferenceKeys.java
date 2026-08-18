@@ -15,6 +15,7 @@ public final class PreferenceKeys {
     public static final String KEY_APP_LOCK_PASSWORD_SALT = "pref_app_lock_password_salt";
     public static final String KEY_APP_LOCK_PASSWORD_ITERATIONS = "pref_app_lock_password_iterations";
     public static final String KEY_EXACT_ALARMS = "pref_exact_alarms";
+    public static final String KEY_LOCK_TIMEOUT = "pref_lock_timeout";
     public static final String KEY_NOTIFICATIONS = "pref_notifications";
 
     public static final String THEME_MODE_LIGHT = "light";
@@ -24,4 +25,11 @@ public final class PreferenceKeys {
     public static final String CONTRAST_STANDARD = "standard";
     public static final String CONTRAST_MEDIUM = "medium";
     public static final String CONTRAST_HIGH = "high";
+
+    public static final String LOCK_TIMEOUT_IMMEDIATELY = "immediately";
+    public static final String LOCK_TIMEOUT_30S = "30s";
+    public static final String LOCK_TIMEOUT_1M = "1m";
+    public static final String LOCK_TIMEOUT_5M = "5m";
+    public static final String LOCK_TIMEOUT_15M = "15m";
+    public static final String LOCK_TIMEOUT_NEVER = "never";
 }
