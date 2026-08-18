@@ -116,6 +116,7 @@
     <string name="preference_app_lock_title">App lock</string>
     <string name="preference_app_lock_summary_unset">Not set</string>
     <string name="preference_app_lock_summary_set">Password set</string>
+    <string name="preference_list_lock_timeout">Lock after</string>
 
     <string name="preference_category_permissions">Permissions</string>
     <string name="preference_exact_alarms_title">Exact alarms</string>
