@@ -29,6 +29,7 @@ import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.databinding.ActivitySettingsBinding;
 import com.mowtiie.keyheimer.scheduling.NotificationHelper;
 import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
+import com.mowtiie.keyheimer.util.AppLockManager;
 import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
 import com.mowtiie.keyheimer.util.ThemeUtil;
@@ -74,13 +75,16 @@ public class SettingsActivity extends KeyheimerActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
-        private final SharedPreferences.OnSharedPreferenceChangeListener themeChangeListener =
+        private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener =
                 (sharedPreferences, key) -> {
                     if (PreferenceKeys.KEY_THEME_MODE.equals(key)) {
                         ThemeUtil.applyNightMode(sharedPreferences);
                     } else if (PreferenceKeys.KEY_THEME_CONTRAST.equals(key)
                             || PreferenceKeys.KEY_DYNAMIC_COLOR.equals(key)) {
                         requireActivity().recreate();
+                    } else if (PreferenceKeys.KEY_BIOMETRIC_ENABLED.equals(key)
+                            || PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH.equals(key)) {
+                        updateLockTimeoutEnabled();
                     }
                 };
 
@@ -91,20 +95,21 @@ public class SettingsActivity extends KeyheimerActivity {
             setUpBiometricPreference();
             setUpAppLockPreference();
             setUpExactAlarmPreference();
-            setUpNotificationPreference();
+            updateLockTimeoutEnabled();
         }
 
         @Override
         public void onResume() {
             super.onResume();
             updateExactAlarmSummary();
-            prefs().registerOnSharedPreferenceChangeListener(themeChangeListener);
+            updateLockTimeoutEnabled();
+            prefs().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
         }
 
         @Override
         public void onPause() {
             super.onPause();
-            prefs().unregisterOnSharedPreferenceChangeListener(themeChangeListener);
+            prefs().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         }
 
         private void setUpDynamicColorPreference() {
@@ -198,36 +203,12 @@ public class SettingsActivity extends KeyheimerActivity {
             });
         }
 
-        private void setUpNotificationPreference() {
-            Preference preference = findPreference(PreferenceKeys.KEY_NOTIFICATIONS);
+        private void updateLockTimeoutEnabled() {
+            Preference preference = findPreference(PreferenceKeys.KEY_LOCK_TIMEOUT);
             if (preference == null) {
                 return;
             }
-
-            preference.setOnPreferenceClickListener(preference1 -> {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName());
-                startActivity(intent);
-                return true;
-            });
-
-            updateNotificationSummary();
-        }
-
-        private void updateNotificationSummary() {
-            Preference preference = findPreference(PreferenceKeys.KEY_NOTIFICATIONS);
-            if (preference == null) {
-                return;
-            }
-
-            boolean enabled = NotificationHelper.hasNotificationPermission(requireContext());
-            if (enabled) {
-                preference.setSummary(R.string.preference_notification_summary_enabled);
-            } else {
-                preference.setIcon(R.drawable.ic_warning);
-                preference.setSummary(R.string.preference_notification_summary_disabled);
-            }
+            preference.setEnabled(AppLockManager.getInstance().isLockConfigured(requireContext()));
         }
 
         private void setUpExactAlarmPreference() {
@@ -258,12 +239,9 @@ public class SettingsActivity extends KeyheimerActivity {
                 return;
             }
             boolean allowed = ReminderScheduler.canScheduleExactAlarms(requireContext());
-            if (allowed) {
-                preference.setSummary(R.string.preference_exact_alarms_summary_allowed);
-            } else {
-                preference.setIcon(R.drawable.ic_warning);
-                preference.setSummary(R.string.preference_exact_alarms_summary_not_allowed);
-            }
+            preference.setSummary(allowed
+                    ? R.string.preference_exact_alarms_summary_allowed
+                    : R.string.preference_exact_alarms_summary_not_allowed);
         }
 
         private SharedPreferences prefs() {
@@ -293,7 +271,7 @@ public class SettingsActivity extends KeyheimerActivity {
                     .apply();
         }
 
-        private char[] charsOf(Editable editable) {
+        private static char[] charsOf(Editable editable) {
             if (editable == null || editable.length() == 0) {
                 return new char[0];
             }
