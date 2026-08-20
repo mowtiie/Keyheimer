@@ -70,6 +70,24 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/preference_category_backup"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="pref_export"
+            app:iconSpaceReserved="false"
+            android:title="@string/preference_export_title"
+            android:summary="@string/preference_export_summary" />
+
+        <Preference
+            android:key="pref_import"
+            app:iconSpaceReserved="false"
+            android:title="@string/preference_import_title"
+            android:summary="@string/preference_import_summary" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/preference_category_permissions"
         app:iconSpaceReserved="false">
 
