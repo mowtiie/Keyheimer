@@ -136,6 +136,12 @@
     <string name="preference_app_source_code_summary">Check the Github repository and the README</string>
     <string name="preference_app_author">Author</string>
 
+    <string name="preference_category_backup">Backup</string>
+    <string name="preference_export_title">Export</string>
+    <string name="preference_export_summary">Export your secrets</string>
+    <string name="preference_import_title">Import</string>
+    <string name="preference_import_summary">Import secrets from a backup</string>
+
     <string name="lock_screen_title">Locked</string>
     <string name="lock_screen_use_biometric_button">Use biometric</string>
 </resources>
