@@ -17,6 +17,8 @@ public final class PreferenceKeys {
     public static final String KEY_EXACT_ALARMS = "pref_exact_alarms";
     public static final String KEY_LOCK_TIMEOUT = "pref_lock_timeout";
     public static final String KEY_NOTIFICATIONS = "pref_notifications";
+    public static final String KEY_BACKUP_EXPORT = "pref_export";
+    public static final String KEY_BACKUP_IMPORT = "pref_import";
 
     public static final String THEME_MODE_LIGHT = "light";
     public static final String THEME_MODE_DARK = "dark";
