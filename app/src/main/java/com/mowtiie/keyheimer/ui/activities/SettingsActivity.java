@@ -14,6 +14,8 @@ import android.view.View;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -73,8 +75,10 @@ public class SettingsActivity extends KeyheimerActivity {
         });
     }
 
-    public static class SettingsFragment extends PreferenceFragmentCompat {
+    public class SettingsFragment extends PreferenceFragmentCompat {
 
+        // Held as a field (not a local/lambda-only reference) because
+        // SharedPreferences only keeps a weak reference to registered listeners.
         private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener =
                 (sharedPreferences, key) -> {
                     if (PreferenceKeys.KEY_THEME_MODE.equals(key)) {
@@ -135,7 +139,32 @@ public class SettingsActivity extends KeyheimerActivity {
                 preference.setEnabled(false);
                 preference.setChecked(false);
                 preference.setSummary(R.string.preference_switch_biometric_summary_unsupported);
+                return;
             }
+
+            preference.setOnPreferenceChangeListener((changedPreference, newValue) -> {
+                if (Boolean.TRUE.equals(newValue)) {
+                    authenticateBeforeEnablingBiometric((SwitchPreferenceCompat) changedPreference);
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        private void authenticateBeforeEnablingBiometric(SwitchPreferenceCompat preference) {
+            BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                    .setTitle(getString(R.string.dialog_title_biometric_prompt))
+                    .setNegativeButtonText(getString(R.string.dialog_button_cancel))
+                    .build();
+
+            BiometricPrompt prompt = new BiometricPrompt(this, ContextCompat.getMainExecutor(requireContext()),
+                    new BiometricPrompt.AuthenticationCallback() {
+                        @Override
+                        public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                            preference.setChecked(true);
+                        }
+                    });
+            prompt.authenticate(promptInfo);
         }
 
         private void setUpAppLockPreference() {
@@ -271,7 +300,7 @@ public class SettingsActivity extends KeyheimerActivity {
                     .apply();
         }
 
-        private static char[] charsOf(Editable editable) {
+        private char[] charsOf(Editable editable) {
             if (editable == null || editable.length() == 0) {
                 return new char[0];
             }
