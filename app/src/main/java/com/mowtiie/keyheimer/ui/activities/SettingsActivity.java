@@ -130,6 +130,7 @@ public class SettingsActivity extends KeyheimerActivity {
             setUpDynamicColorPreference();
             setUpBiometricPreference();
             setUpAppLockPreference();
+            setUpNotificationPreference();
             setUpExactAlarmPreference();
             setUpBackupPreferences();
             updateLockTimeoutEnabled();
@@ -271,6 +272,38 @@ public class SettingsActivity extends KeyheimerActivity {
                 return;
             }
             preference.setEnabled(AppLockManager.getInstance().isLockConfigured(requireContext()));
+        }
+
+        private void setUpNotificationPreference() {
+            Preference preference = findPreference(PreferenceKeys.KEY_NOTIFICATIONS);
+            if (preference == null) {
+                return;
+            }
+
+            preference.setOnPreferenceClickListener(preference1 -> {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName());
+                startActivity(intent);
+                return true;
+            });
+
+            updateNotificationSummary();
+        }
+
+        private void updateNotificationSummary() {
+            Preference preference = findPreference(PreferenceKeys.KEY_NOTIFICATIONS);
+            if (preference == null) {
+                return;
+            }
+
+            boolean enabled = NotificationHelper.hasNotificationPermission(requireContext());
+            if (enabled) {
+                preference.setSummary(R.string.preference_notification_summary_enabled);
+            } else {
+                preference.setIcon(R.drawable.ic_warning);
+                preference.setSummary(R.string.preference_notification_summary_disabled);
+            }
         }
 
         private void setUpExactAlarmPreference() {
