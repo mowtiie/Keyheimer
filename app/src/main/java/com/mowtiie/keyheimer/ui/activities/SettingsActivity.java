@@ -1,5 +1,6 @@
 package com.mowtiie.keyheimer.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,8 +11,11 @@ import android.text.Editable;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
@@ -28,15 +32,26 @@ import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mowtiie.keyheimer.R;
+import com.mowtiie.keyheimer.data.Secret;
+import com.mowtiie.keyheimer.data.SecretDao;
 import com.mowtiie.keyheimer.databinding.ActivitySettingsBinding;
 import com.mowtiie.keyheimer.scheduling.NotificationHelper;
 import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
+import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.AppLockManager;
+import com.mowtiie.keyheimer.util.BackupManager;
 import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
 import com.mowtiie.keyheimer.util.ThemeUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class SettingsActivity extends KeyheimerActivity {
 
@@ -75,7 +90,23 @@ public class SettingsActivity extends KeyheimerActivity {
         });
     }
 
-    public class SettingsFragment extends PreferenceFragmentCompat {
+    public static class SettingsFragment extends PreferenceFragmentCompat {
+
+        private SecretDao secretDao;
+
+        private final ActivityResultLauncher<String> exportLauncher = registerForActivityResult(
+                new ActivityResultContracts.CreateDocument("application/json"), uri -> {
+                    if (uri != null) {
+                        performExport(uri);
+                    }
+                });
+
+        private final ActivityResultLauncher<String[]> importLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(), uri -> {
+                    if (uri != null) {
+                        performImport(uri);
+                    }
+                });
 
         // Held as a field (not a local/lambda-only reference) because
         // SharedPreferences only keeps a weak reference to registered listeners.
@@ -95,10 +126,12 @@ public class SettingsActivity extends KeyheimerActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences_settings, rootKey);
+            secretDao = new SecretDao(requireContext());
             setUpDynamicColorPreference();
             setUpBiometricPreference();
             setUpAppLockPreference();
             setUpExactAlarmPreference();
+            setUpBackupPreferences();
             updateLockTimeoutEnabled();
         }
 
@@ -300,7 +333,89 @@ public class SettingsActivity extends KeyheimerActivity {
                     .apply();
         }
 
-        private char[] charsOf(Editable editable) {
+        private void setUpBackupPreferences() {
+            Preference exportPreference = findPreference(PreferenceKeys.KEY_BACKUP_EXPORT);
+            if (exportPreference != null) {
+                exportPreference.setOnPreferenceClickListener(clicked -> {
+                    exportLauncher.launch(defaultBackupFilename());
+                    return true;
+                });
+            }
+
+            Preference importPreference = findPreference(PreferenceKeys.KEY_BACKUP_IMPORT);
+            if (importPreference != null) {
+                importPreference.setOnPreferenceClickListener(clicked -> {
+                    importLauncher.launch(new String[]{"application/json"});
+                    return true;
+                });
+            }
+        }
+
+        private String defaultBackupFilename() {
+            String timestamp = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date());
+            return "keyheimer-backup-" + timestamp + ".json";
+        }
+
+        private void performExport(Uri uri) {
+            Context appContext = requireContext().getApplicationContext();
+            AppExecutors.getInstance().diskIO().execute(() -> {
+                List<Secret> secrets = secretDao.getAll();
+                if (secrets.isEmpty()) {
+                    AppExecutors.getInstance().mainThread(() -> showToast(R.string.toast_export_no_secrets));
+                    return;
+                }
+                try (OutputStream out = appContext.getContentResolver().openOutputStream(uri)) {
+                    if (out == null) {
+                        throw new IOException("Unable to open output stream");
+                    }
+
+                    BackupManager.exportToJson(secrets, out);
+                    AppExecutors.getInstance().mainThread(() -> showToast(R.string.toast_export_successful));
+                } catch (Exception e) {
+                    AppExecutors.getInstance().mainThread(() -> showToast(R.string.toast_export_failed));
+                }
+            });
+        }
+
+        private void performImport(Uri uri) {
+            Context appContext = requireContext().getApplicationContext();
+            AppExecutors.getInstance().diskIO().execute(() -> {
+                try (InputStream in = appContext.getContentResolver().openInputStream(uri)) {
+                    if (in == null) {
+                        throw new IOException("Unable to open input stream");
+                    }
+
+                    List<Secret> imported = BackupManager.importFromJson(in);
+                    for (Secret secret : imported) {
+                        secretDao.insert(secret);
+                    }
+                    AppExecutors.getInstance().mainThread(() -> {
+                        for (Secret secret : imported) {
+                            if (secret.isActive()) {
+                                ReminderScheduler.scheduleReminder(appContext, secret);
+                            }
+                        }
+                        showToast(getString(R.string.toast_import_successful, imported.size()));
+                    });
+                } catch (Exception e) {
+                    AppExecutors.getInstance().mainThread(() -> showToast(R.string.toast_import_failed));
+                }
+            });
+        }
+
+        private void showToast(int stringRes) {
+            if (isAdded()) {
+                Toast.makeText(requireContext(), stringRes, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        private void showToast(String message) {
+            if (isAdded()) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        private static char[] charsOf(Editable editable) {
             if (editable == null || editable.length() == 0) {
                 return new char[0];
             }

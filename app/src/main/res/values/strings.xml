@@ -99,6 +99,11 @@
     <string name="toast_crash_copy_success">Crash report copied to clipboard</string>
     <string name="toast_crash_save_success">Crash report saved</string>
     <string name="toast_crash_save_failure">Couldn\'t save the crash report</string>
+    <string name="toast_export_successful">Export successful</string>
+    <string name="toast_export_failed">Export failed</string>
+    <string name="toast_export_no_secrets">No secrets to export</string>
+    <string name="toast_import_successful">Imported %1$d secret(s)</string>
+    <string name="toast_import_failed">Import failed</string>
 
     <string name="preference_category_theme">Theme</string>
     <string name="preference_list_theme">Theme</string>
