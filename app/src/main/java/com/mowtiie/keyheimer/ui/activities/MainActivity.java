@@ -3,10 +3,15 @@ package com.mowtiie.keyheimer.ui.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,15 +20,21 @@ import android.view.ViewGroup;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
@@ -71,6 +82,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
         binding.recyclerSecrets.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SecretAdapter(this);
         binding.recyclerSecrets.setAdapter(adapter);
+        new ItemTouchHelper(new SwipeCallback()).attachToRecyclerView(binding.recyclerSecrets);
 
         binding.fabAddSecret.setOnClickListener(v ->
                 startActivity(new Intent(this, AddEditSecretActivity.class)));
@@ -310,5 +322,130 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
     @Override
     public void onVerifyNowClicked(Secret secret) {
         showVerifySheet(secret.getId());
+    }
+
+    private void deleteSecretWithUndo(Secret secret) {
+        String secretId = secret.getId();
+        ReminderScheduler.cancelReminder(this, secretId);
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            dao.delete(secretId);
+            AppExecutors.getInstance().mainThread(() -> {
+                loadSecrets();
+                showUndoSnackbar(secret);
+            });
+        });
+    }
+
+    private void showUndoSnackbar(Secret secret) {
+        Snackbar.make(binding.mainRoot,
+                        getString(R.string.snackbar_secret_deleted, secret.getName()), Snackbar.LENGTH_LONG)
+                .setAction(R.string.snackbar_undo, v -> restoreSecret(secret))
+                .show();
+    }
+
+    private void restoreSecret(Secret secret) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            dao.insert(secret);
+            AppExecutors.getInstance().mainThread(() -> {
+                if (secret.isActive()) {
+                    ReminderScheduler.scheduleReminder(this, secret);
+                }
+                loadSecrets();
+            });
+        });
+    }
+
+    private void togglePauseResume(Secret secret) {
+        secret.setActive(!secret.isActive());
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            dao.update(secret);
+            AppExecutors.getInstance().mainThread(() -> {
+                if (secret.isActive()) {
+                    ReminderScheduler.scheduleReminder(this, secret);
+                } else {
+                    ReminderScheduler.cancelReminder(this, secret.getId());
+                }
+                loadSecrets();
+            });
+        });
+    }
+
+    private int resolveThemeColor(int attrResId) {
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(attrResId, typedValue, true);
+        return typedValue.data;
+    }
+
+    private final class SwipeCallback extends ItemTouchHelper.SimpleCallback {
+
+        private final ColorDrawable deleteBackground;
+        private final ColorDrawable toggleBackground;
+        private final Drawable deleteIcon;
+        private final Drawable pauseIcon;
+        private final Drawable playIcon;
+        private final int iconMargin;
+
+        SwipeCallback() {
+            super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+            deleteBackground = new ColorDrawable(resolveThemeColor(getColor(R.color.md_theme_error)));
+            toggleBackground = new ColorDrawable(resolveThemeColor(getColor(R.color.md_theme_primary)));
+
+            Drawable baseDeleteIcon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_delete);
+            deleteIcon = DrawableCompat.wrap(baseDeleteIcon.mutate());
+            DrawableCompat.setTint(deleteIcon, Color.WHITE);
+
+            pauseIcon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_pause);
+            playIcon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_play_arrow);
+            iconMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
+                              @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            int position = viewHolder.getBindingAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) {
+                return;
+            }
+            Secret secret = adapter.getSecretAt(position);
+            if (direction == ItemTouchHelper.LEFT) {
+                deleteSecretWithUndo(secret);
+            } else {
+                togglePauseResume(secret);
+            }
+        }
+
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            View itemView = viewHolder.itemView;
+            int top = itemView.getTop();
+            int bottom = itemView.getBottom();
+            int iconSize = bottom - top - 2 * iconMargin;
+
+            int position = viewHolder.getBindingAdapterPosition();
+            if (dX > 0 && position != RecyclerView.NO_POSITION) {
+                toggleBackground.setBounds(itemView.getLeft(), top, itemView.getLeft() + (int) dX, bottom);
+                toggleBackground.draw(c);
+
+                Secret secret = adapter.getSecretAt(position);
+                Drawable icon = secret.isActive() ? pauseIcon : playIcon;
+                int left = itemView.getLeft() + iconMargin;
+                icon.setBounds(left, top + iconMargin, left + iconSize, bottom - iconMargin);
+                icon.draw(c);
+            } else if (dX < 0) {
+                deleteBackground.setBounds(itemView.getRight() + (int) dX, top, itemView.getRight(), bottom);
+                deleteBackground.draw(c);
+
+                int right = itemView.getRight() - iconMargin;
+                deleteIcon.setBounds(right - iconSize, top + iconMargin, right, bottom - iconMargin);
+                deleteIcon.draw(c);
+            }
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
     }
 }
