@@ -19,6 +19,8 @@
     <string name="section_passphrase">Passphrase</string>
     <string name="section_schedule">Reminder schedule</string>
 
+    <string name="field_secret_stats">Remembered %1$d of %2$d times</string>
+
     <string name="notification_recall_title">Recall passphrase</string>
     <string name="notification_recall_content">Tap to verify if you still remember the passphrase for %s.</string>
 
@@ -99,11 +101,15 @@
     <string name="toast_crash_copy_success">Crash report copied to clipboard</string>
     <string name="toast_crash_save_success">Crash report saved</string>
     <string name="toast_crash_save_failure">Couldn\'t save the crash report</string>
+
     <string name="toast_export_successful">Export successful</string>
     <string name="toast_export_failed">Export failed</string>
     <string name="toast_export_no_secrets">No secrets to export</string>
     <string name="toast_import_successful">Imported %1$d secret(s)</string>
     <string name="toast_import_failed">Import failed</string>
+
+    <string name="snackbar_secret_deleted">Deleted \u201c%1$s\u201d</string>
+    <string name="snackbar_undo">Undo</string>
 
     <string name="preference_category_theme">Theme</string>
     <string name="preference_list_theme">Theme</string>
@@ -123,6 +129,12 @@
     <string name="preference_app_lock_summary_set">Password set</string>
     <string name="preference_list_lock_timeout">Lock after</string>
 
+    <string name="preference_category_backup">Backup</string>
+    <string name="preference_export_title">Export</string>
+    <string name="preference_export_summary">Export your secrets</string>
+    <string name="preference_import_title">Import</string>
+    <string name="preference_import_summary">Import secrets from a backup</string>
+
     <string name="preference_category_permissions">Permissions</string>
     <string name="preference_exact_alarms_title">Exact alarms</string>
     <string name="preference_notification_title">Notification</string>
@@ -140,12 +152,6 @@
     <string name="preference_app_source_code_title">Source Code</string>
     <string name="preference_app_source_code_summary">Check the Github repository and the README</string>
     <string name="preference_app_author">Author</string>
-
-    <string name="preference_category_backup">Backup</string>
-    <string name="preference_export_title">Export</string>
-    <string name="preference_export_summary">Export your secrets</string>
-    <string name="preference_import_title">Import</string>
-    <string name="preference_import_summary">Import secrets from a backup</string>
 
     <string name="lock_screen_title">Locked</string>
     <string name="lock_screen_use_biometric_button">Use biometric</string>
