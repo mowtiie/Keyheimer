@@ -5,6 +5,7 @@ import android.text.Editable;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
@@ -37,7 +38,6 @@ public class AddEditSecretActivity extends KeyheimerActivity {
     private static final Secret.IntervalUnit[] INTERVAL_UNITS = {
             Secret.IntervalUnit.DAY, Secret.IntervalUnit.WEEK, Secret.IntervalUnit.MONTH
     };
-
     private static final int DEFAULT_REMINDER_HOUR = 9;
     private static final int DEFAULT_REMINDER_MINUTE = 0;
 
@@ -62,11 +62,7 @@ public class AddEditSecretActivity extends KeyheimerActivity {
 
         binding.toolbar.setTitle(editMode ? R.string.toolbar_edit : R.string.toolbar_create);
         binding.toolbar.setNavigationOnClickListener(v -> finish());
-
         setSupportActionBar(binding.toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
 
         setUpIntervalUnitDropdown();
         setUpReminderTimePicker();
@@ -147,7 +143,19 @@ public class AddEditSecretActivity extends KeyheimerActivity {
         updateTimeDisplay();
         binding.switchActive.setChecked(secret.isActive());
         binding.tilPassphrase.setHelperText(getString(R.string.field_passphrase_helper_edit));
+        bindStats(secret);
         invalidateOptionsMenu();
+    }
+
+    private void bindStats(Secret secret) {
+        int totalAttempts = secret.getSuccessCount() + secret.getFailCount();
+        if (totalAttempts == 0) {
+            binding.textSecretStats.setVisibility(View.GONE);
+            return;
+        }
+        binding.textSecretStats.setVisibility(View.VISIBLE);
+        binding.textSecretStats.setText(
+                getString(R.string.field_secret_stats, secret.getSuccessCount(), totalAttempts));
     }
 
     @Override
@@ -249,6 +257,7 @@ public class AddEditSecretActivity extends KeyheimerActivity {
 
     private void confirmDelete() {
         new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.ic_delete)
                 .setTitle(getString(R.string.dialog_title_delete_secret, existingSecret.getName()))
                 .setMessage(R.string.dialog_message_delete_secret)
                 .setPositiveButton(R.string.dialog_button_delete, (dialog, which) -> deleteSecret())
