@@ -1,10 +1,12 @@
 package com.mowtiie.keyheimer.ui.dialogs;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,11 +116,17 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
 
     private void handleResult(boolean matched) {
         binding.buttonVerify.setEnabled(true);
+        triggerHapticFeedback(matched);
         if (matched) {
             onVerifySuccess();
         } else {
             onVerifyFailure();
         }
+    }
+
+    private void triggerHapticFeedback(boolean success) {
+        int constant = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ? (success ? HapticFeedbackConstants.CONFIRM : HapticFeedbackConstants.REJECT) : HapticFeedbackConstants.KEYBOARD_TAP;
+        binding.getRoot().performHapticFeedback(constant);
     }
 
     private void onVerifySuccess() {
