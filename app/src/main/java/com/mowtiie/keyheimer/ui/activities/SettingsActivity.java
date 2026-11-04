@@ -8,7 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
-import android.util.Base64;
+import java.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -364,7 +364,7 @@ public class SettingsActivity extends KeyheimerActivity {
             String hash = HashUtil.hash(password, salt, iterations);
             prefs.edit()
                     .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, hash)
-                    .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_SALT, Base64.encodeToString(salt, Base64.NO_WRAP))
+                    .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_SALT, Base64.getEncoder().encodeToString(salt))
                     .putInt(PreferenceKeys.KEY_APP_LOCK_PASSWORD_ITERATIONS, iterations)
                     .apply();
         }

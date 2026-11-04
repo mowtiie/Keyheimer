@@ -1,6 +1,6 @@
 package com.mowtiie.keyheimer.util;
 
-import android.util.Base64;
+import java.util.Base64;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,7 +34,7 @@ public final class HashUtil {
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance(ALGORITHM);
             byte[] hashBytes = factory.generateSecret(spec).getEncoded();
-            return Base64.encodeToString(hashBytes, Base64.NO_WRAP);
+            return Base64.getEncoder().encodeToString(hashBytes);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new RuntimeException("Unable to hash passphrase", e);
         } finally {
@@ -44,8 +44,8 @@ public final class HashUtil {
 
     public static boolean verify(char[] attempt, byte[] salt, int iterations, String storedHash) {
         String attemptHash = hash(attempt, salt, iterations);
-        byte[] a = Base64.decode(attemptHash, Base64.NO_WRAP);
-        byte[] b = Base64.decode(storedHash, Base64.NO_WRAP);
+        byte[] a = Base64.getDecoder().decode(attemptHash);
+        byte[] b = Base64.getDecoder().decode(storedHash);
         boolean result = MessageDigest.isEqual(a, b);
         Arrays.fill(a, (byte) 0);
         Arrays.fill(b, (byte) 0);

@@ -3,7 +3,7 @@ package com.mowtiie.keyheimer.ui.activities;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
-import android.util.Base64;
+import java.util.Base64;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -110,7 +110,7 @@ public class LockActivity extends KeyheimerActivity {
         if (storedHash.isEmpty() || saltEncoded.isEmpty()) {
             return false;
         }
-        byte[] salt = Base64.decode(saltEncoded, Base64.NO_WRAP);
+        byte[] salt = Base64.getDecoder().decode(saltEncoded);
         return HashUtil.verify(password, salt, iterations, storedHash);
     }
 

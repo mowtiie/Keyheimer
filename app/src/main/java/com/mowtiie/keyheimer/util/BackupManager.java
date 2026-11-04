@@ -1,6 +1,6 @@
 package com.mowtiie.keyheimer.util;
 
-import android.util.Base64;
+import java.util.Base64;
 
 import com.mowtiie.keyheimer.data.Secret;
 
@@ -87,7 +87,7 @@ public final class BackupManager {
         JSONObject object = new JSONObject();
         object.put("name", secret.getName());
         object.put("hint", secret.getHint() == null ? JSONObject.NULL : secret.getHint());
-        object.put("salt", Base64.encodeToString(secret.getSalt(), Base64.NO_WRAP));
+        object.put("salt", Base64.getEncoder().encodeToString(secret.getSalt()));
         object.put("hash", secret.getHash());
         object.put("iterations", secret.getIterations());
         object.put("intervalValue", secret.getIntervalValue());
@@ -107,7 +107,7 @@ public final class BackupManager {
         secret.setId(UUID.randomUUID().toString());
         secret.setName(object.getString("name"));
         secret.setHint(object.isNull("hint") ? null : object.getString("hint"));
-        secret.setSalt(Base64.decode(object.getString("salt"), Base64.NO_WRAP));
+        secret.setSalt(Base64.getDecoder().decode(object.getString("salt")));
         secret.setHash(object.getString("hash"));
         secret.setIterations(object.getInt("iterations"));
         secret.setIntervalValue(object.getInt("intervalValue"));
@@ -139,7 +139,7 @@ public final class BackupManager {
             throw new JSONException("Invalid iteration count");
         }
         try {
-            if (Base64.decode(secret.getHash(), Base64.NO_WRAP).length != HASH_BYTES) {
+            if (Base64.getDecoder().decode(secret.getHash()).length != HASH_BYTES) {
                 throw new JSONException("Invalid hash");
             }
         } catch (IllegalArgumentException e) {
