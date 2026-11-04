@@ -44,6 +44,7 @@ import com.mowtiie.keyheimer.ui.adapters.SecretAdapter;
 import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.AppLockManager;
+import com.mowtiie.keyheimer.util.IntervalConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -344,8 +345,13 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
     }
 
     private void restoreSecret(Secret secret) {
+        if (secret.isActive() && secret.getNextTriggerAt() < System.currentTimeMillis()) {
+            secret.setNextTriggerAt(IntervalConverter.computeNextTriggerAt(
+                    secret.getIntervalValue(), secret.getIntervalUnit(),
+                    secret.getReminderHour(), secret.getReminderMinute()));
+        }
         AppExecutors.getInstance().diskIO().execute(() -> {
-            dao.insert(secret);
+            dao.restore(secret);
             AppExecutors.getInstance().mainThread(() -> {
                 if (secret.isActive()) {
                     ReminderScheduler.scheduleReminder(this, secret);
@@ -356,14 +362,27 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
     }
 
     private void togglePauseResume(Secret secret) {
-        secret.setActive(!secret.isActive());
+        String secretId = secret.getId();
+        boolean activate = !secret.isActive();
         AppExecutors.getInstance().diskIO().execute(() -> {
-            dao.update(secret);
-            AppExecutors.getInstance().mainThread(() -> {
-                if (secret.isActive()) {
-                    ReminderScheduler.scheduleReminder(this, secret);
+            Secret current = dao.getById(secretId);
+            Secret updated = null;
+            if (current != null) {
+                if (activate) {
+                    dao.activate(secretId, IntervalConverter.computeNextTriggerAt(
+                            current.getIntervalValue(), current.getIntervalUnit(),
+                            current.getReminderHour(), current.getReminderMinute()));
                 } else {
-                    ReminderScheduler.cancelReminder(this, secret.getId());
+                    dao.setActive(secretId, false);
+                }
+                updated = dao.getById(secretId);
+            }
+            Secret result = updated;
+            AppExecutors.getInstance().mainThread(() -> {
+                if (result != null && result.isActive()) {
+                    ReminderScheduler.scheduleReminder(this, result);
+                } else {
+                    ReminderScheduler.cancelReminder(this, secretId);
                 }
                 loadSecrets();
             });

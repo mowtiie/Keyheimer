@@ -117,6 +117,19 @@ public class SecretDao {
         db.update(TABLE_NAME, values, COLUMN_ID + " = ?", new String[]{id});
     }
 
+    public void restore(Secret secret) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.insertOrThrow(TABLE_NAME, null, toContentValues(secret));
+    }
+
+    public void activate(String id, long nextTriggerAt) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_IS_ACTIVE, 1);
+        values.put(COLUMN_NEXT_TRIGGER_AT, nextTriggerAt);
+        db.update(TABLE_NAME, values, COLUMN_ID + " = ?", new String[]{id});
+    }
+
     public void setActive(String id, boolean active) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
