@@ -45,6 +45,4 @@ public final class SecretContract {
                     COLUMN_REMINDER_HOUR + " INTEGER NOT NULL DEFAULT 9, " +
                     COLUMN_REMINDER_MINUTE + " INTEGER NOT NULL DEFAULT 0" +
                     ");";
-
-    public static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS " + TABLE_NAME;
 }

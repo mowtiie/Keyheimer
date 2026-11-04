@@ -33,8 +33,18 @@ public class SecretDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(SecretContract.DROP_TABLE_SQL);
-        onCreate(db);
+        for (int version = oldVersion; version < newVersion; version++) {
+            migrate(db, version);
+        }
+    }
+
+    // When DATABASE_VERSION is bumped, add `case <old version>:` running the ALTER TABLE
+    // statements that take the schema to the next version, and update SecretContract.CREATE_TABLE_SQL.
+    private void migrate(SQLiteDatabase db, int fromVersion) {
+        switch (fromVersion) {
+            default:
+                throw new IllegalStateException("No migration from database version " + fromVersion);
+        }
     }
 
     @Override
