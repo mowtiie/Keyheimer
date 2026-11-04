@@ -136,8 +136,8 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
                 return;
             }
             binding.textSecretStats.setVisibility(View.VISIBLE);
-            binding.textSecretStats.setText(itemView.getContext().getString(
-                    R.string.field_secret_stats, secret.getSuccessCount(), totalAttempts));
+            binding.textSecretStats.setText(itemView.getResources().getQuantityString(
+                    R.plurals.field_secret_stats, totalAttempts, secret.getSuccessCount(), totalAttempts));
         }
 
         private static int intervalPluralsRes(Secret.IntervalUnit unit) {

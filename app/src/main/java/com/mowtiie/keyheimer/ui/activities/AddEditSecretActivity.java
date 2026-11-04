@@ -176,8 +176,8 @@ public class AddEditSecretActivity extends KeyheimerActivity {
             return;
         }
         binding.textSecretStats.setVisibility(View.VISIBLE);
-        binding.textSecretStats.setText(
-                getString(R.string.field_secret_stats, secret.getSuccessCount(), totalAttempts));
+        binding.textSecretStats.setText(getResources().getQuantityString(
+                R.plurals.field_secret_stats, totalAttempts, secret.getSuccessCount(), totalAttempts));
     }
 
     @Override

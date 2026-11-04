@@ -19,7 +19,10 @@
     <string name="section_passphrase">Passphrase</string>
     <string name="section_schedule">Reminder schedule</string>
 
-    <string name="field_secret_stats">Remembered %1$d of %2$d times</string>
+    <plurals name="field_secret_stats">
+        <item quantity="one">Remembered %1$d of %2$d time</item>
+        <item quantity="other">Remembered %1$d of %2$d times</item>
+    </plurals>
     <string name="field_secret_paused">Paused</string>
     <string name="field_secret_schedule">Every %1$s • Next: %2$s at %3$s</string>
     <plurals name="field_interval_days">
@@ -130,8 +133,14 @@
     <string name="toast_export_successful">Export successful</string>
     <string name="toast_export_failed">Export failed</string>
     <string name="toast_export_no_secrets">No secrets to export</string>
-    <string name="toast_import_successful">Imported %1$d secret(s)</string>
-    <string name="toast_import_skipped">Imported %1$d, skipped %2$d already present</string>
+    <plurals name="toast_import_successful">
+        <item quantity="one">Imported %1$d secret</item>
+        <item quantity="other">Imported %1$d secrets</item>
+    </plurals>
+    <plurals name="toast_import_skipped">
+        <item quantity="one">Imported %1$d, skipped %2$d duplicate</item>
+        <item quantity="other">Imported %1$d, skipped %2$d duplicates</item>
+    </plurals>
     <string name="toast_import_failed">Import failed</string>
 
     <string name="snackbar_secret_deleted">Deleted \u201c%1$s\u201d</string>

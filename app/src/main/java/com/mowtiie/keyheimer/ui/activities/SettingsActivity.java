@@ -444,8 +444,10 @@ public class SettingsActivity extends KeyheimerActivity {
                             }
                         }
                         showToast(skipped == 0
-                                ? getString(R.string.toast_import_successful, imported.size())
-                                : getString(R.string.toast_import_skipped, imported.size(), skipped));
+                                ? getResources().getQuantityString(
+                                        R.plurals.toast_import_successful, imported.size(), imported.size())
+                                : getResources().getQuantityString(
+                                        R.plurals.toast_import_skipped, skipped, imported.size(), skipped));
                     });
                 } catch (Exception e) {
                     AppExecutors.getInstance().mainThread(() -> showToast(R.string.toast_import_failed));
