@@ -42,6 +42,11 @@ public final class NotificationHelper {
                 .setSmallIcon(R.drawable.ic_notification_keyheimer)
                 .setContentTitle(context.getString(R.string.notification_recall_title))
                 .setContentText(String.format(context.getString(R.string.notification_recall_content), secret.getName()))
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                .setPublicVersion(new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification_keyheimer)
+                        .setContentTitle(context.getString(R.string.notification_recall_title))
+                        .build())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent);
