@@ -1,5 +1,6 @@
 package com.mowtiie.keyheimer.ui.adapters;
 
+import android.content.Context;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -15,7 +16,7 @@ import com.mowtiie.keyheimer.databinding.ItemSecretBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
 
 public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretViewHolder> {
 
@@ -78,16 +79,17 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
         }
 
         private String buildSubtitle(Secret secret) {
-            String interval = secret.getIntervalValue() + " " +
-                    pluralize(secret.getIntervalUnit().name().toLowerCase(Locale.US), secret.getIntervalValue());
+            Context context = itemView.getContext();
             if (!secret.isActive()) {
-                return "Paused";
+                return context.getString(R.string.field_secret_paused);
             }
+            String interval = context.getResources().getQuantityString(
+                    intervalPluralsRes(secret.getIntervalUnit()), secret.getIntervalValue(), secret.getIntervalValue());
             CharSequence relative = DateUtils.getRelativeTimeSpanString(
                     secret.getNextTriggerAt(), System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE);
             String time = DateFormat.getTimeFormat(itemView.getContext()).format(secret.getNextTriggerAt());
-            return "Every " + interval + " • Next: " + relative + " at " + time;
+            return context.getString(R.string.field_secret_schedule, interval, relative, time);
         }
 
         private void bindStats(Secret secret) {
@@ -101,8 +103,16 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
                     R.string.field_secret_stats, secret.getSuccessCount(), totalAttempts));
         }
 
-        private String pluralize(String unit, int value) {
-            return value == 1 ? unit : unit + "s";
+        private static int intervalPluralsRes(Secret.IntervalUnit unit) {
+            switch (unit) {
+                case WEEK:
+                    return R.plurals.field_interval_weeks;
+                case MONTH:
+                    return R.plurals.field_interval_months;
+                case DAY:
+                default:
+                    return R.plurals.field_interval_days;
+            }
         }
     }
 }

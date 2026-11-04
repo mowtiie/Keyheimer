@@ -53,8 +53,8 @@ public final class NotificationHelper {
     private static void ensureChannel(Context context) {
         NotificationManager manager = context.getSystemService(NotificationManager.class);
         if (manager.getNotificationChannel(CHANNEL_ID) == null) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Passphrase reminders", NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Reminders to recall your stored passphrases");
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, context.getString(R.string.notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(context.getString(R.string.notification_channel_description));
             manager.createNotificationChannel(channel);
         }
     }

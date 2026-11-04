@@ -20,9 +20,25 @@
     <string name="section_schedule">Reminder schedule</string>
 
     <string name="field_secret_stats">Remembered %1$d of %2$d times</string>
+    <string name="field_secret_paused">Paused</string>
+    <string name="field_secret_schedule">Every %1$s • Next: %2$s at %3$s</string>
+    <plurals name="field_interval_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="field_interval_weeks">
+        <item quantity="one">%d week</item>
+        <item quantity="other">%d weeks</item>
+    </plurals>
+    <plurals name="field_interval_months">
+        <item quantity="one">%d month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
 
     <string name="notification_recall_title">Recall passphrase</string>
     <string name="notification_recall_content">Tap to verify if you still remember the passphrase for %s.</string>
+    <string name="notification_channel_name">Passphrase reminders</string>
+    <string name="notification_channel_description">Reminders to recall your stored passphrases</string>
 
     <string name="field_secret_name">Secret name</string>
     <string name="field_secret_name_helper">e.g. Password manager master password</string>
