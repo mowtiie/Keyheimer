@@ -5,6 +5,7 @@
         <ignore path="**/mipmap-*/ic_launcher*.webp" />
         <ignore path="**/drawable/ic_launcher_*.xml" />
         <ignore path="**/values/ic_launcher_background.xml" />
+        <ignore path="**/values/ic_launcher_debug_background.xml" />
         <!-- Part of the generated Material colour palette. -->
         <ignore regexp="md_theme_scrim" />
     </issue>
