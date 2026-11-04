@@ -39,6 +39,8 @@ public class AddEditSecretActivity extends KeyheimerActivity {
     private static final Secret.IntervalUnit[] INTERVAL_UNITS = {
             Secret.IntervalUnit.DAY, Secret.IntervalUnit.WEEK, Secret.IntervalUnit.MONTH
     };
+    private static final String STATE_HOUR = "state_hour";
+    private static final String STATE_MINUTE = "state_minute";
     private static final int DEFAULT_REMINDER_HOUR = 9;
     private static final int DEFAULT_REMINDER_MINUTE = 0;
 
@@ -46,6 +48,7 @@ public class AddEditSecretActivity extends KeyheimerActivity {
     private SecretDao dao;
     private boolean editMode;
     private boolean saving;
+    private boolean restoredState;
     private Secret existingSecret;
     private int selectedHour = DEFAULT_REMINDER_HOUR;
     private int selectedMinute = DEFAULT_REMINDER_MINUTE;
@@ -56,6 +59,12 @@ public class AddEditSecretActivity extends KeyheimerActivity {
         EdgeToEdge.enable(this);
         binding = ActivityAddEditSecretBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        restoredState = savedInstanceState != null;
+        if (restoredState) {
+            selectedHour = savedInstanceState.getInt(STATE_HOUR, selectedHour);
+            selectedMinute = savedInstanceState.getInt(STATE_MINUTE, selectedMinute);
+        }
 
         String secretId = getIntent().getStringExtra(EXTRA_SECRET_ID);
         editMode = secretId != null;
@@ -76,6 +85,13 @@ public class AddEditSecretActivity extends KeyheimerActivity {
             binding.inputIntervalUnit.setText(getResources().getStringArray(R.array.interval_units)[0], false);
             updateTimeDisplay();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_HOUR, selectedHour);
+        outState.putInt(STATE_MINUTE, selectedMinute);
     }
 
     private void setUpIntervalUnitDropdown() {
@@ -134,16 +150,18 @@ public class AddEditSecretActivity extends KeyheimerActivity {
             return;
         }
         existingSecret = secret;
-        binding.inputName.setText(secret.getName());
-        binding.inputHint.setText(secret.getHint());
-        binding.inputIntervalValue.setText(String.valueOf(secret.getIntervalValue()));
-        binding.inputIntervalUnit.setText(
-                getResources().getStringArray(R.array.interval_units)[indexOfUnit(secret.getIntervalUnit())],
-                false);
-        selectedHour = secret.getReminderHour();
-        selectedMinute = secret.getReminderMinute();
-        updateTimeDisplay();
-        binding.switchActive.setChecked(secret.isActive());
+        if (!restoredState) {
+            binding.inputName.setText(secret.getName());
+            binding.inputHint.setText(secret.getHint());
+            binding.inputIntervalValue.setText(String.valueOf(secret.getIntervalValue()));
+            binding.inputIntervalUnit.setText(
+                    getResources().getStringArray(R.array.interval_units)[indexOfUnit(secret.getIntervalUnit())],
+                    false);
+            selectedHour = secret.getReminderHour();
+            selectedMinute = secret.getReminderMinute();
+            updateTimeDisplay();
+            binding.switchActive.setChecked(secret.isActive());
+        }
         binding.tilPassphrase.setHelperText(getString(R.string.field_passphrase_helper_edit));
         bindStats(secret);
         invalidateOptionsMenu();
@@ -181,7 +199,7 @@ public class AddEditSecretActivity extends KeyheimerActivity {
     }
 
     private void attemptSave() {
-        if (saving) {
+        if (saving || (editMode && existingSecret == null)) {
             return;
         }
         String name = textOf(binding.inputName);
@@ -210,10 +228,13 @@ public class AddEditSecretActivity extends KeyheimerActivity {
 
         if (!editMode && !changingPassphrase) {
             binding.tilPassphrase.setError(getString(R.string.field_error_passphrase_required));
+            Arrays.fill(confirmPassphrase, '\0');
             return;
         }
         if (changingPassphrase && !Arrays.equals(passphrase, confirmPassphrase)) {
             binding.tilConfirmPassphrase.setError(getString(R.string.field_error_passphrase_mismatch));
+            Arrays.fill(passphrase, '\0');
+            Arrays.fill(confirmPassphrase, '\0');
             return;
         }
         binding.tilPassphrase.setError(null);
