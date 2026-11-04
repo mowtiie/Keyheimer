@@ -8,7 +8,6 @@ import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
-import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -39,7 +38,7 @@ public class LockActivity extends KeyheimerActivity {
 
         AppLockManager lockManager = AppLockManager.getInstance();
         hasPassword = lockManager.hasPassword(this);
-        biometricAvailable = lockManager.isBiometricEnabled(this) && canUseBiometric();
+        biometricAvailable = lockManager.isBiometricEnabled(this) && lockManager.isBiometricUsable(this);
 
         binding.tilPassword.setVisibility(hasPassword ? View.VISIBLE : View.GONE);
         binding.buttonUnlockPassword.setVisibility(hasPassword ? View.VISIBLE : View.GONE);
@@ -63,11 +62,6 @@ public class LockActivity extends KeyheimerActivity {
                 moveTaskToBack(true);
             }
         });
-    }
-
-    private boolean canUseBiometric() {
-        return BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-                == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
     private void showBiometricPrompt() {

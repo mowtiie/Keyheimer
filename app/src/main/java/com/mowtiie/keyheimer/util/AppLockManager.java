@@ -3,6 +3,7 @@ package com.mowtiie.keyheimer.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.biometric.BiometricManager;
 import androidx.preference.PreferenceManager;
 
 public final class AppLockManager {
@@ -49,7 +50,12 @@ public final class AppLockManager {
     }
 
     public boolean isLockConfigured(Context context) {
-        return hasPassword(context) || isBiometricEnabled(context);
+        return hasPassword(context) || (isBiometricEnabled(context) && isBiometricUsable(context));
+    }
+
+    public boolean isBiometricUsable(Context context) {
+        return BiometricManager.from(context).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
     public boolean hasPassword(Context context) {
