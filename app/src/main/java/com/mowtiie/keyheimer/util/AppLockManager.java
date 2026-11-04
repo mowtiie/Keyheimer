@@ -41,10 +41,11 @@ public final class AppLockManager {
             return false;
         }
         long timeoutMillis = resolveTimeoutMillis(context);
-        if (timeoutMillis < 0) {
-            return false;
+        if (timeoutMillis >= 0 && System.currentTimeMillis() - backgroundedAtMillis >= timeoutMillis) {
+            return true;
         }
-        return System.currentTimeMillis() - backgroundedAtMillis >= timeoutMillis;
+        backgroundedAtMillis = 0L;
+        return false;
     }
 
     public boolean isLockConfigured(Context context) {
