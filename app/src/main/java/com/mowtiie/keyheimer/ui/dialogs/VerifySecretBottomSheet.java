@@ -150,7 +150,7 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
         Context appContext = requireContext().getApplicationContext();
 
         AppExecutors.getInstance().diskIO().execute(() -> {
-            dao.updateVerificationResult(secretId, true, nextTriggerAt);
+            dao.recordSuccess(secretId, nextTriggerAt);
             Secret updated = dao.getById(secretId);
             AppExecutors.getInstance().mainThread(() -> {
                 if (updated != null && updated.isActive()) {
@@ -173,9 +173,7 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
     private void onVerifyFailure() {
         failureCount++;
         String secretId = secret.getId();
-        long nextTriggerAt = secret.getNextTriggerAt();
-        AppExecutors.getInstance().diskIO().execute(() ->
-                dao.updateVerificationResult(secretId, false, nextTriggerAt));
+        AppExecutors.getInstance().diskIO().execute(() -> dao.recordFailure(secretId));
 
         if (binding == null) {
             return;

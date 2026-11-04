@@ -102,19 +102,20 @@ public class SecretDao {
         return results;
     }
 
-    public void updateVerificationResult(String id, boolean success, long newNextTriggerAt) {
+    public void recordSuccess(String id, long newNextTriggerAt) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NEXT_TRIGGER_AT, newNextTriggerAt);
-        if (success) {
-            values.put(COLUMN_LAST_VERIFIED_AT, System.currentTimeMillis());
-        }
-        Secret current = getById(id);
-        if (current != null) {
-            values.put(COLUMN_SUCCESS_COUNT, current.getSuccessCount() + (success ? 1 : 0));
-            values.put(COLUMN_FAIL_COUNT, current.getFailCount() + (success ? 0 : 1));
-        }
-        db.update(TABLE_NAME, values, COLUMN_ID + " = ?", new String[]{id});
+        db.execSQL("UPDATE " + TABLE_NAME + " SET "
+                        + COLUMN_SUCCESS_COUNT + " = " + COLUMN_SUCCESS_COUNT + " + 1, "
+                        + COLUMN_LAST_VERIFIED_AT + " = ?, "
+                        + COLUMN_NEXT_TRIGGER_AT + " = ? WHERE " + COLUMN_ID + " = ?",
+                new Object[]{System.currentTimeMillis(), newNextTriggerAt, id});
+    }
+
+    public void recordFailure(String id) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("UPDATE " + TABLE_NAME + " SET "
+                        + COLUMN_FAIL_COUNT + " = " + COLUMN_FAIL_COUNT + " + 1 WHERE " + COLUMN_ID + " = ?",
+                new Object[]{id});
     }
 
     public void updateCredentials(String id, byte[] salt, String hash, int iterations) {
