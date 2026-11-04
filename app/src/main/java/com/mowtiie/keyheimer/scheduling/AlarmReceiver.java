@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
+import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.IntervalConverter;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -17,17 +18,25 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
-        SecretDao dao = new SecretDao(context);
-        Secret secret = dao.getById(secretId);
-        if (secret == null || !secret.isActive()) {
-            return;
-        }
+        Context appContext = context.getApplicationContext();
+        PendingResult result = goAsync();
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                SecretDao dao = new SecretDao(appContext);
+                Secret secret = dao.getById(secretId);
+                if (secret == null || !secret.isActive()) {
+                    return;
+                }
 
-        long nextTriggerAt = IntervalConverter.computeNextTriggerAt(secret.getIntervalValue(), secret.getIntervalUnit(), secret.getReminderHour(), secret.getReminderMinute());
-        secret.setNextTriggerAt(nextTriggerAt);
-        dao.update(secret);
+                long nextTriggerAt = IntervalConverter.computeNextTriggerAt(secret.getIntervalValue(), secret.getIntervalUnit(), secret.getReminderHour(), secret.getReminderMinute());
+                secret.setNextTriggerAt(nextTriggerAt);
+                dao.update(secret);
 
-        ReminderScheduler.scheduleReminder(context, secret);
-        NotificationHelper.showReminder(context, secret);
+                ReminderScheduler.scheduleReminder(appContext, secret);
+                NotificationHelper.showReminder(appContext, secret);
+            } finally {
+                result.finish();
+            }
+        });
     }
 }

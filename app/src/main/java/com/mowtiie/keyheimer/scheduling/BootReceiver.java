@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
+import com.mowtiie.keyheimer.util.AppExecutors;
 
 import java.util.List;
 
@@ -17,12 +18,19 @@ public class BootReceiver extends BroadcastReceiver {
             return;
         }
 
-        SecretDao dao = new SecretDao(context);
-        List<Secret> secrets = dao.getAll();
-        for (Secret secret : secrets) {
-            if (secret.isActive()) {
-                ReminderScheduler.scheduleReminder(context, secret);
+        Context appContext = context.getApplicationContext();
+        PendingResult result = goAsync();
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                List<Secret> secrets = new SecretDao(appContext).getAll();
+                for (Secret secret : secrets) {
+                    if (secret.isActive()) {
+                        ReminderScheduler.scheduleReminder(appContext, secret);
+                    }
+                }
+            } finally {
+                result.finish();
             }
-        }
+        });
     }
 }
