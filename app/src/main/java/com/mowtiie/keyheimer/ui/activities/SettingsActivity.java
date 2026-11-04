@@ -380,7 +380,12 @@ public class SettingsActivity extends KeyheimerActivity {
             Preference exportPreference = findPreference(PreferenceKeys.KEY_BACKUP_EXPORT);
             if (exportPreference != null) {
                 exportPreference.setOnPreferenceClickListener(clicked -> {
-                    exportLauncher.launch(defaultBackupFilename());
+                    SecurityScreenUtil.show(requireContext(), new MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(R.string.dialog_title_export)
+                            .setMessage(R.string.dialog_message_export)
+                            .setPositiveButton(R.string.dialog_button_export,
+                                    (dialog, which) -> exportLauncher.launch(defaultBackupFilename()))
+                            .setNegativeButton(R.string.dialog_button_cancel, null));
                     return true;
                 });
             }
@@ -428,7 +433,9 @@ public class SettingsActivity extends KeyheimerActivity {
                         throw new IOException("Unable to open input stream");
                     }
 
-                    List<Secret> imported = BackupManager.importFromJson(in);
+                    List<Secret> parsed = BackupManager.importFromJson(in);
+                    List<Secret> imported = BackupManager.withoutDuplicates(secretDao.getAll(), parsed);
+                    int skipped = parsed.size() - imported.size();
                     secretDao.insertAll(imported);
                     AppExecutors.getInstance().mainThread(() -> {
                         for (Secret secret : imported) {
@@ -436,7 +443,9 @@ public class SettingsActivity extends KeyheimerActivity {
                                 ReminderScheduler.scheduleReminder(appContext, secret);
                             }
                         }
-                        showToast(getString(R.string.toast_import_successful, imported.size()));
+                        showToast(skipped == 0
+                                ? getString(R.string.toast_import_successful, imported.size())
+                                : getString(R.string.toast_import_skipped, imported.size(), skipped));
                     });
                 } catch (Exception e) {
                     AppExecutors.getInstance().mainThread(() -> showToast(R.string.toast_import_failed));

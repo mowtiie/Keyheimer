@@ -101,6 +101,9 @@
     <string name="dialog_button_unlock">Unlock</string>
     <string name="dialog_button_use_password">Use password</string>
     <string name="dialog_button_close">Close</string>
+    <string name="dialog_button_export">Export</string>
+    <string name="dialog_title_export">Export backup</string>
+    <string name="dialog_message_export">The backup file is not encrypted. It contains the name, hint and passphrase hash of every secret. Keep it somewhere private.</string>
 
     <string name="menu_item_save">Save</string>
     <string name="menu_item_delete">Delete</string>
@@ -128,6 +131,7 @@
     <string name="toast_export_failed">Export failed</string>
     <string name="toast_export_no_secrets">No secrets to export</string>
     <string name="toast_import_successful">Imported %1$d secret(s)</string>
+    <string name="toast_import_skipped">Imported %1$d, skipped %2$d already present</string>
     <string name="toast_import_failed">Import failed</string>
 
     <string name="snackbar_secret_deleted">Deleted \u201c%1$s\u201d</string>

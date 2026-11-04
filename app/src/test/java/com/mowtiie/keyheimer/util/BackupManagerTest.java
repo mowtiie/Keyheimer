@@ -101,6 +101,21 @@ public class BackupManagerTest {
     }
 
     @Test
+    public void withoutDuplicates_dropsSecretsAlreadyPresentAndRepeatsInTheFile() throws Exception {
+        Secret existing = secret();
+        Secret sameAsExisting = importFrom(export(existing)).get(0);
+        Secret other = secret();
+        Secret otherCopy = importFrom(export(other)).get(0);
+
+        List<Secret> fresh = BackupManager.withoutDuplicates(
+                Collections.singletonList(existing),
+                java.util.Arrays.asList(sameAsExisting, other, otherCopy));
+
+        assertEquals(1, fresh.size());
+        assertEquals(other.getHash(), fresh.get(0).getHash());
+    }
+
+    @Test
     public void import_rejectsAnUnsupportedSchemaVersion() {
         assertThrows(JSONException.class, () -> importFrom("{\"schemaVersion\":99,\"secrets\":[]}"));
     }

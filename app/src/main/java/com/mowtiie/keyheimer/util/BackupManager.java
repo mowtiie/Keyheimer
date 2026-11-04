@@ -17,7 +17,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public final class BackupManager {
@@ -81,6 +83,24 @@ public final class BackupManager {
             imported.add(fromJson(secretsArray.getJSONObject(i)));
         }
         return imported;
+    }
+
+    public static List<Secret> withoutDuplicates(List<Secret> existing, List<Secret> imported) {
+        Set<String> known = new HashSet<>();
+        for (Secret secret : existing) {
+            known.add(identityKey(secret));
+        }
+        List<Secret> fresh = new ArrayList<>();
+        for (Secret secret : imported) {
+            if (known.add(identityKey(secret))) {
+                fresh.add(secret);
+            }
+        }
+        return fresh;
+    }
+
+    private static String identityKey(Secret secret) {
+        return Base64.getEncoder().encodeToString(secret.getSalt()) + ":" + secret.getHash();
     }
 
     private static JSONObject toJson(Secret secret) throws JSONException {
