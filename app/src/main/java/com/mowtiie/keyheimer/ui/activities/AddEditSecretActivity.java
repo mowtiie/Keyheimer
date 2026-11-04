@@ -218,6 +218,12 @@ public class AddEditSecretActivity extends KeyheimerActivity {
         boolean active = binding.switchActive.isChecked();
 
         Secret secret = existingSecret != null ? existingSecret : new Secret();
+        boolean scheduleChanged = existingSecret == null
+                || secret.getIntervalValue() != intervalValue
+                || secret.getIntervalUnit() != intervalUnit
+                || secret.getReminderHour() != selectedHour
+                || secret.getReminderMinute() != selectedMinute
+                || (!secret.isActive() && active);
         secret.setId(existingSecret != null ? existingSecret.getId() : UUID.randomUUID().toString());
         secret.setName(name);
         secret.setHint(hint.isEmpty() ? null : hint);
@@ -226,8 +232,10 @@ public class AddEditSecretActivity extends KeyheimerActivity {
         secret.setActive(active);
         secret.setReminderHour(selectedHour);
         secret.setReminderMinute(selectedMinute);
-        secret.setNextTriggerAt(IntervalConverter.computeNextTriggerAt(
-                intervalValue, intervalUnit, selectedHour, selectedMinute));
+        if (scheduleChanged) {
+            secret.setNextTriggerAt(IntervalConverter.computeNextTriggerAt(
+                    intervalValue, intervalUnit, selectedHour, selectedMinute));
+        }
 
         if (changingPassphrase) {
             byte[] salt = HashUtil.generateSalt();
