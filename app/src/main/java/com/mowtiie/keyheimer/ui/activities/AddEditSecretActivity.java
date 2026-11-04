@@ -191,6 +191,12 @@ public class AddEditSecretActivity extends KeyheimerActivity {
             binding.tilIntervalValue.setError(getString(R.string.field_error_interval_value_required));
             return;
         }
+        Secret.IntervalUnit intervalUnit = INTERVAL_UNITS[indexOfUnitLabel(textOf(binding.inputIntervalUnit))];
+        if (!IntervalConverter.isValidInterval(intervalValue, intervalUnit)) {
+            binding.tilIntervalValue.setError(getString(R.string.field_error_interval_value_range,
+                    IntervalConverter.maxIntervalValue(intervalUnit)));
+            return;
+        }
         binding.tilIntervalValue.setError(null);
 
         char[] passphrase = charsOf(binding.inputPassphrase.getText());
@@ -209,7 +215,6 @@ public class AddEditSecretActivity extends KeyheimerActivity {
         binding.tilConfirmPassphrase.setError(null);
 
         String hint = textOf(binding.inputHint);
-        Secret.IntervalUnit intervalUnit = INTERVAL_UNITS[indexOfUnitLabel(textOf(binding.inputIntervalUnit))];
         boolean active = binding.switchActive.isChecked();
 
         Secret secret = existingSecret != null ? existingSecret : new Secret();

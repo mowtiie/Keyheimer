@@ -45,6 +45,7 @@
     <string name="field_error_passphrase_required">Passphrase is required</string>
     <string name="field_error_passphrase_mismatch">Passphrases don\'t match</string>
     <string name="field_error_interval_value_required">Enter a number greater than 0</string>
+    <string name="field_error_interval_value_range">Enter a number between 1 and %1$d</string>
     <string name="field_error_verify_passphrase">That doesn\'t match. Try again, or reset this reminder.</string>
     <string name="field_error_password_length">Enter at least 6 characters</string>
     <string name="field_error_password_mismatch">Passwords don\'t match</string>

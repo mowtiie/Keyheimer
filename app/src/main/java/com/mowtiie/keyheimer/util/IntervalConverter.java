@@ -6,6 +6,10 @@ import java.util.Calendar;
 
 public final class IntervalConverter {
 
+    private static final int MAX_DAYS = 3650;
+    private static final int MAX_WEEKS = 520;
+    private static final int MAX_MONTHS = 120;
+
     private IntervalConverter() {
     }
 
@@ -14,7 +18,25 @@ public final class IntervalConverter {
                 reminderHour, reminderMinute);
     }
 
+    public static int maxIntervalValue(Secret.IntervalUnit unit) {
+        switch (unit) {
+            case DAY:
+                return MAX_DAYS;
+            case WEEK:
+                return MAX_WEEKS;
+            case MONTH:
+                return MAX_MONTHS;
+            default:
+                throw new IllegalArgumentException("Unknown interval unit: " + unit);
+        }
+    }
+
+    public static boolean isValidInterval(int intervalValue, Secret.IntervalUnit unit) {
+        return intervalValue >= 1 && intervalValue <= maxIntervalValue(unit);
+    }
+
     static long computeNextTriggerFrom(long fromMillis, int intervalValue, Secret.IntervalUnit unit, int reminderHour, int reminderMinute) {
+        intervalValue = Math.max(1, Math.min(intervalValue, maxIntervalValue(unit)));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(fromMillis);
         calendar.set(Calendar.HOUR_OF_DAY, reminderHour);
