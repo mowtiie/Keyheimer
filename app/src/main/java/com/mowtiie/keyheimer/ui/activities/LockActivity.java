@@ -17,6 +17,7 @@ import androidx.preference.PreferenceManager;
 
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.databinding.ActivityLockBinding;
+import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.AppLockManager;
 import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
@@ -82,14 +83,23 @@ public class LockActivity extends KeyheimerActivity {
 
     private void attemptPasswordUnlock() {
         char[] password = charsOf(binding.inputPassword.getText());
-        boolean matches = verifyPassword(password);
-        Arrays.fill(password, '\0');
-        if (matches) {
-            unlock();
-        } else {
-            binding.tilPassword.setError(getString(R.string.field_error_lock_password));
-            binding.inputPassword.setText(null);
-        }
+        binding.buttonUnlockPassword.setEnabled(false);
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            boolean matches = verifyPassword(password);
+            Arrays.fill(password, '\0');
+            AppExecutors.getInstance().mainThread(() -> {
+                if (isDestroyed()) {
+                    return;
+                }
+                binding.buttonUnlockPassword.setEnabled(true);
+                if (matches) {
+                    unlock();
+                } else {
+                    binding.tilPassword.setError(getString(R.string.field_error_lock_password));
+                    binding.inputPassword.setText(null);
+                }
+            });
+        });
     }
 
     private boolean verifyPassword(char[] password) {

@@ -44,6 +44,7 @@ public class AddEditSecretActivity extends KeyheimerActivity {
     private ActivityAddEditSecretBinding binding;
     private SecretDao dao;
     private boolean editMode;
+    private boolean saving;
     private Secret existingSecret;
     private int selectedHour = DEFAULT_REMINDER_HOUR;
     private int selectedMinute = DEFAULT_REMINDER_MINUTE;
@@ -179,6 +180,9 @@ public class AddEditSecretActivity extends KeyheimerActivity {
     }
 
     private void attemptSave() {
+        if (saving) {
+            return;
+        }
         String name = textOf(binding.inputName);
         if (name.isEmpty()) {
             binding.tilName.setError(getString(R.string.field_error_name_required));
@@ -237,21 +241,22 @@ public class AddEditSecretActivity extends KeyheimerActivity {
                     intervalValue, intervalUnit, selectedHour, selectedMinute));
         }
 
-        if (changingPassphrase) {
-            byte[] salt = HashUtil.generateSalt();
-            int iterations = HashUtil.DEFAULT_ITERATIONS;
-            secret.setSalt(salt);
-            secret.setIterations(iterations);
-            secret.setHash(HashUtil.hash(passphrase, salt, iterations));
-        }
-        Arrays.fill(passphrase, '\0');
         Arrays.fill(confirmPassphrase, '\0');
 
-        persistAndSchedule(secret);
+        saving = true;
+        persistAndSchedule(secret, changingPassphrase ? passphrase : null);
     }
 
-    private void persistAndSchedule(Secret secret) {
+    private void persistAndSchedule(Secret secret, char[] passphrase) {
         AppExecutors.getInstance().diskIO().execute(() -> {
+            if (passphrase != null) {
+                byte[] salt = HashUtil.generateSalt();
+                int iterations = HashUtil.DEFAULT_ITERATIONS;
+                secret.setSalt(salt);
+                secret.setIterations(iterations);
+                secret.setHash(HashUtil.hash(passphrase, salt, iterations));
+                Arrays.fill(passphrase, '\0');
+            }
             if (editMode) {
                 dao.update(secret);
             } else {

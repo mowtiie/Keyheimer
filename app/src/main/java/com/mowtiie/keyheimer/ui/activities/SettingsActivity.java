@@ -245,6 +245,7 @@ public class SettingsActivity extends KeyheimerActivity {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                 char[] password = charsOf(passwordInput.getText());
                 char[] confirmPassword = charsOf(confirmInput.getText());
+                SharedPreferences sharedPrefs = prefs();
 
                 if (password.length < 6) {
                     passwordInput.setError(getString(R.string.field_error_password_length));
@@ -258,11 +259,18 @@ public class SettingsActivity extends KeyheimerActivity {
                     return;
                 }
 
-                savePassword(password);
-                Arrays.fill(password, '\0');
                 Arrays.fill(confirmPassword, '\0');
-                dialog.dismiss();
-                updateAppLockSummary(preference);
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                AppExecutors.getInstance().diskIO().execute(() -> {
+                    savePassword(sharedPrefs, password);
+                    Arrays.fill(password, '\0');
+                    AppExecutors.getInstance().mainThread(() -> {
+                        dialog.dismiss();
+                        if (isAdded()) {
+                            updateAppLockSummary(preference);
+                        }
+                    });
+                });
             });
         }
 
@@ -347,11 +355,11 @@ public class SettingsActivity extends KeyheimerActivity {
             return prefs().getString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, "");
         }
 
-        private void savePassword(char[] password) {
+        private void savePassword(SharedPreferences prefs, char[] password) {
             byte[] salt = HashUtil.generateSalt();
             int iterations = HashUtil.DEFAULT_ITERATIONS;
             String hash = HashUtil.hash(password, salt, iterations);
-            prefs().edit()
+            prefs.edit()
                     .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, hash)
                     .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_SALT, Base64.encodeToString(salt, Base64.NO_WRAP))
                     .putInt(PreferenceKeys.KEY_APP_LOCK_PASSWORD_ITERATIONS, iterations)
