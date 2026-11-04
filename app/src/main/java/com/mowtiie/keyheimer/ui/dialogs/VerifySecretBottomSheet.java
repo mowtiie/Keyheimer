@@ -20,6 +20,7 @@ import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.data.Secret;
 import com.mowtiie.keyheimer.data.SecretDao;
 import com.mowtiie.keyheimer.databinding.BottomSheetVerifySecretBinding;
+import com.mowtiie.keyheimer.scheduling.NotificationHelper;
 import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.ui.activities.AddEditSecretActivity;
 import com.mowtiie.keyheimer.util.AppExecutors;
@@ -156,6 +157,7 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
                 if (updated != null && updated.isActive()) {
                     ReminderScheduler.scheduleReminder(appContext, updated);
                 }
+                NotificationHelper.cancelReminder(appContext, secretId);
                 showSuccessState();
             });
         });

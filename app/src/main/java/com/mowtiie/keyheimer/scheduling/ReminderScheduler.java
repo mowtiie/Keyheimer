@@ -45,6 +45,7 @@ public final class ReminderScheduler {
     public static void cancelReminder(Context context, String secretId) {
         AlarmManager alarmManager = context.getSystemService(AlarmManager.class);
         alarmManager.cancel(buildPendingIntent(context, secretId));
+        NotificationHelper.cancelReminder(context, secretId);
     }
 
     private static PendingIntent buildPendingIntent(Context context, String secretId) {

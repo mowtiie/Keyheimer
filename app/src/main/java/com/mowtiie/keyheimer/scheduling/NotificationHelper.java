@@ -55,6 +55,10 @@ public final class NotificationHelper {
         manager.notify(secret.getId().hashCode(), builder.build());
     }
 
+    public static void cancelReminder(Context context, String secretId) {
+        context.getSystemService(NotificationManager.class).cancel(secretId.hashCode());
+    }
+
     private static void ensureChannel(Context context) {
         NotificationManager manager = context.getSystemService(NotificationManager.class);
         if (manager.getNotificationChannel(CHANNEL_ID) == null) {
