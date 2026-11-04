@@ -1,6 +1,7 @@
 package com.mowtiie.keyheimer.ui.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -46,6 +48,7 @@ import com.mowtiie.keyheimer.ui.adapters.SecretAdapter;
 import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.AppLockManager;
+import com.mowtiie.keyheimer.util.CrashReporter;
 import com.mowtiie.keyheimer.util.IntervalConverter;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
 import com.mowtiie.keyheimer.util.SecurityScreenUtil;
@@ -73,6 +76,24 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
             });
 
+    private final ActivityResultLauncher<Intent> crashSaveLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                Uri uri = result.getData() == null ? null : result.getData().getData();
+                if (result.getResultCode() != RESULT_OK || uri == null) {
+                    return;
+                }
+                Context appContext = getApplicationContext();
+                AppExecutors.getInstance().diskIO().execute(() -> {
+                    boolean saved = CrashReporter.writeReportToUri(appContext, uri);
+                    if (saved) {
+                        CrashReporter.deleteReport(appContext);
+                    }
+                    AppExecutors.getInstance().mainThread(() -> Toast.makeText(appContext,
+                            saved ? R.string.toast_crash_save_success : R.string.toast_crash_save_failure,
+                            Toast.LENGTH_SHORT).show());
+                });
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +117,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
         requestNotificationPermissionIfNeeded();
         requestExactAlarmPermissionIfNeeded();
         handleVerifyIntent(getIntent());
+        CrashReporter.showDialogIfPending(this, crashSaveLauncher);
     }
 
     @Override

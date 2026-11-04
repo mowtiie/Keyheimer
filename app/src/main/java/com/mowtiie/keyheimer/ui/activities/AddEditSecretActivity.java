@@ -82,6 +82,7 @@ public class AddEditSecretActivity extends KeyheimerActivity {
         if (editMode) {
             loadExistingSecret(secretId);
         } else {
+            binding.tilPassphrase.setHelperText(getString(R.string.field_passphrase_helper_add));
             binding.inputIntervalUnit.setText(getResources().getStringArray(R.array.interval_units)[0], false);
             updateTimeDisplay();
         }
