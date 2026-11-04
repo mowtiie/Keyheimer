@@ -6,18 +6,19 @@
 
 **Never forget the passphrase that protects everything else.**
 
-Keyheimer is a simple, open-source app that helps you actually remember the master passphrases guarding your password manager and encrypted backups. It works by scheduling recall checks, not by storing your passphrases in any recoverable form — there's no account, no server, and nothing saved that could ever be read back to you or anyone else.
+Keyheimer is a simple, open-source app that helps you actually remember the master passphrases guarding your password manager and encrypted backups. It works by scheduling recall checks, not by storing your passphrases in any recoverable form. There is no account, no server, and nothing saved that could ever be read back to you or anyone else.
 
 </div>
 
 ## Features
 
-* **Free and Open Source:** Enjoy complete transparency and community-driven development.
-* **Hash-Only, By Design:** Passphrases are never stored in plaintext or in any recoverable form — only a salted PBKDF2 hash, the same way a real authentication system verifies a password. There is no "reveal" option, because there's nothing stored that could be revealed.
-* **Flexible Reminders:** Set any interval — days, weeks, or months — and the exact time of day you want to be reminded, down to the minute.
-* **Recall, Not Autofill:** Tapping a reminder — or "Verify now" from the list — opens a quick passphrase check. Get it right and the next reminder is scheduled; get it wrong and you're told plainly, with an optional hint and a way to reset if you're stuck.
-* **Security Screen:** Screenshots and screen recording are blocked by default on every screen, including passphrase verification.
-* **Fully Offline:** Keyheimer requests no internet permission at all — it is architecturally incapable of sending your data anywhere. You can verify this yourself in your system's app settings.
+* **Hash-Only, By Design:** Passphrases are never stored in plaintext or in any recoverable form. Only a salted PBKDF2 hash is kept, the same way a real authentication system verifies a password. There is no "reveal" option, because there is nothing stored that could be revealed.
+* **Flexible Reminders:** Set any interval in days, weeks, or months, and the exact time of day you want to be reminded.
+* **Recall, Not Autofill:** Tapping a reminder, or "Verify now" from the list, opens a quick passphrase check. Get it right and the next reminder is scheduled. Get it wrong and you are told plainly, with an optional hint and a way to reset if you are stuck.
+* **App Lock:** Protect the app with a password, biometrics, or both. Choose how soon it locks again, and repeated wrong passwords are slowed down.
+* **Security Screen:** Screenshots and screen recording are blocked by default, including on the passphrase check. You can turn this off in settings.
+* **Backup and Restore:** Export your secrets to a JSON file and import them again later. Backups never contain passphrases, but they are not encrypted, so keep them somewhere private.
+* **Fully Offline:** Keyheimer requests no internet permission at all, so it is architecturally incapable of sending your data anywhere. You can verify this yourself in your system's app settings.
 
 ## Screenshots
 
@@ -70,7 +71,7 @@ Certificate fingerprints:
 
 ### PGP Signing
 
-As an additional layer on top of the Android signature above, each release is also signed with my PGP key. While `apksigner` confirms the APK itself is intact, a PGP signature confirms that *I* am the one who published this specific file to GitHub — an independent check that doesn't rely on GitHub's account security alone.
+As an additional layer on top of the Android signature above, each release is also signed with my PGP key. While `apksigner` confirms the APK itself is intact, a PGP signature confirms that *I* am the one who published this specific file to GitHub. This is an independent check that doesn't rely on GitHub's account security alone.
 
 **Public key fingerprint:**
 ```
@@ -84,7 +85,7 @@ curl -O https://mowtiie.cc/PGP_PUBLIC_KEY.asc
 gpg --import PGP_PUBLIC_KEY.asc
 ```
 
-After importing, confirm the fingerprint printed by GPG matches the one listed above — that match is what actually establishes trust, not the import step itself. Fetching the key over HTTPS from a domain you already trust is arguably a stronger anchor than a keyserver, since keyservers accept uploads from anyone and don't vouch for identity.
+After importing, confirm the fingerprint printed by GPG matches the one listed above. That match is what actually establishes trust, not the import step itself. Fetching the key over HTTPS from a domain you already trust is arguably a stronger anchor than a keyserver, since keyservers accept uploads from anyone and don't vouch for identity.
 
 Each release includes a detached `.asc` signature alongside the APK. Verify a downloaded release with:
 
@@ -98,15 +99,11 @@ A valid signature looks like:
 Good signature from "Mowtiie <mowtiie.dev@gmail.com>"
 ```
 
-**Note:** PGP signing is a supplementary trust measure, not a substitute for the `apksigner` check above — verify both if you want the highest confidence that a release is genuine and unmodified.
+**Note:** PGP signing is a supplementary trust measure, not a substitute for the `apksigner` check above. Verify both if you want the highest confidence that a release is genuine and unmodified.
 
 ## Mapping Files
 
-Each release on GitHub includes a `mapping-<version>.txt` file alongside the APK. This file is needed to deobfuscate stack traces from crash reports — match the file to the version shown in the crash report header and use it with `retrace` from the Android SDK.
-
-## Contributing
-
-Issues and pull requests are welcome. If you're filing a bug, please include your Android version and the steps to reproduce.
+Each release on GitHub includes a `mapping-<version>.txt` file alongside the APK. This file is needed to deobfuscate stack traces from crash reports. Match the file to the version shown in the crash report header and use it with `retrace` from the Android SDK.
 
 ## License
 
