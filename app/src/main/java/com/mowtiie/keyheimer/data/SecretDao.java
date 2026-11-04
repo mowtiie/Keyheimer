@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.mowtiie.keyheimer.util.IntervalConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +53,23 @@ public class SecretDao {
                 COLUMN_ID + " = ?",
                 new String[]{secret.getId()}
         );
+    }
+
+    public List<Secret> repairIntervals() {
+        List<Secret> repaired = new ArrayList<>();
+        for (Secret secret : getAll()) {
+            if (IntervalConverter.isValidInterval(secret.getIntervalValue(), secret.getIntervalUnit())) {
+                continue;
+            }
+            secret.setIntervalValue(IntervalConverter.clampInterval(
+                    secret.getIntervalValue(), secret.getIntervalUnit()));
+            secret.setNextTriggerAt(IntervalConverter.computeNextTriggerAt(
+                    secret.getIntervalValue(), secret.getIntervalUnit(),
+                    secret.getReminderHour(), secret.getReminderMinute()));
+            update(secret);
+            repaired.add(secret);
+        }
+        return repaired;
     }
 
     public void delete(String id) {

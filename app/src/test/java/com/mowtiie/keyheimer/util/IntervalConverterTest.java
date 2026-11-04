@@ -97,4 +97,15 @@ public class IntervalConverterTest {
             assertFalse(IntervalConverter.isValidInterval(max + 1, unit));
         }
     }
+
+    @Test
+    public void clampInterval_pullsValuesIntoTheValidRange() {
+        for (Secret.IntervalUnit unit : Secret.IntervalUnit.values()) {
+            int max = IntervalConverter.maxIntervalValue(unit);
+            assertEquals(1, IntervalConverter.clampInterval(Integer.MIN_VALUE, unit));
+            assertEquals(1, IntervalConverter.clampInterval(0, unit));
+            assertEquals(Math.min(5, max), IntervalConverter.clampInterval(5, unit));
+            assertEquals(max, IntervalConverter.clampInterval(Integer.MAX_VALUE, unit));
+        }
+    }
 }

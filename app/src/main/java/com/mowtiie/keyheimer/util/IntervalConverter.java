@@ -31,12 +31,16 @@ public final class IntervalConverter {
         }
     }
 
+    public static int clampInterval(int intervalValue, Secret.IntervalUnit unit) {
+        return Math.max(1, Math.min(intervalValue, maxIntervalValue(unit)));
+    }
+
     public static boolean isValidInterval(int intervalValue, Secret.IntervalUnit unit) {
         return intervalValue >= 1 && intervalValue <= maxIntervalValue(unit);
     }
 
     static long computeNextTriggerFrom(long fromMillis, int intervalValue, Secret.IntervalUnit unit, int reminderHour, int reminderMinute) {
-        intervalValue = Math.max(1, Math.min(intervalValue, maxIntervalValue(unit)));
+        intervalValue = clampInterval(intervalValue, unit);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(fromMillis);
         calendar.set(Calendar.HOUR_OF_DAY, reminderHour);
