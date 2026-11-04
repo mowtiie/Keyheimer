@@ -26,6 +26,22 @@ public class SecretDao {
         db.insert(TABLE_NAME, null, toContentValues(secret));
     }
 
+    public void insertAll(List<Secret> secrets) {
+        long now = System.currentTimeMillis();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (Secret secret : secrets) {
+                secret.setCreatedAt(now);
+                secret.setUpdatedAt(now);
+                db.insertOrThrow(TABLE_NAME, null, toContentValues(secret));
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public void update(Secret secret) {
         secret.setUpdatedAt(System.currentTimeMillis());
         SQLiteDatabase db = dbHelper.getWritableDatabase();

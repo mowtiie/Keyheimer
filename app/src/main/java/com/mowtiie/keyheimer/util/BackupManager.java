@@ -23,6 +23,15 @@ import java.util.UUID;
 public final class BackupManager {
 
     private static final int SCHEMA_VERSION = 1;
+    private static final int MAX_IMPORT_CHARS = 5_000_000;
+    private static final int MAX_IMPORT_SECRETS = 1000;
+    private static final int MAX_NAME_LENGTH = 200;
+    private static final int MAX_HINT_LENGTH = 1000;
+    private static final int MIN_SALT_BYTES = 8;
+    private static final int MAX_SALT_BYTES = 64;
+    private static final int MIN_ITERATIONS = 10_000;
+    private static final int MAX_ITERATIONS = 2_000_000;
+    private static final int HASH_BYTES = 32;
 
     private BackupManager() {
     }
@@ -51,11 +60,21 @@ public final class BackupManager {
             int read;
             while ((read = reader.read(buffer)) != -1) {
                 builder.append(buffer, 0, read);
+                if (builder.length() > MAX_IMPORT_CHARS) {
+                    throw new IOException("Backup file is too large");
+                }
             }
         }
 
         JSONObject root = new JSONObject(builder.toString());
+        int schemaVersion = root.optInt("schemaVersion", 1);
+        if (schemaVersion < 1 || schemaVersion > SCHEMA_VERSION) {
+            throw new JSONException("Unsupported schema version: " + schemaVersion);
+        }
         JSONArray secretsArray = root.getJSONArray("secrets");
+        if (secretsArray.length() > MAX_IMPORT_SECRETS) {
+            throw new JSONException("Too many secrets");
+        }
 
         List<Secret> imported = new ArrayList<>();
         for (int i = 0; i < secretsArray.length(); i++) {
@@ -100,6 +119,41 @@ public final class BackupManager {
         secret.setSuccessCount(object.optInt("successCount", 0));
         secret.setFailCount(object.optInt("failCount", 0));
         secret.setActive(object.getBoolean("active"));
+        validate(secret);
         return secret;
+    }
+
+    private static void validate(Secret secret) throws JSONException {
+        String name = secret.getName().trim();
+        if (name.isEmpty() || name.length() > MAX_NAME_LENGTH) {
+            throw new JSONException("Invalid name");
+        }
+        secret.setName(name);
+        if (secret.getHint() != null && secret.getHint().length() > MAX_HINT_LENGTH) {
+            throw new JSONException("Invalid hint");
+        }
+        if (secret.getSalt().length < MIN_SALT_BYTES || secret.getSalt().length > MAX_SALT_BYTES) {
+            throw new JSONException("Invalid salt");
+        }
+        if (secret.getIterations() < MIN_ITERATIONS || secret.getIterations() > MAX_ITERATIONS) {
+            throw new JSONException("Invalid iteration count");
+        }
+        try {
+            if (Base64.decode(secret.getHash(), Base64.NO_WRAP).length != HASH_BYTES) {
+                throw new JSONException("Invalid hash");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new JSONException("Invalid hash");
+        }
+        if (!IntervalConverter.isValidInterval(secret.getIntervalValue(), secret.getIntervalUnit())) {
+            throw new JSONException("Invalid interval");
+        }
+        if (secret.getReminderHour() < 0 || secret.getReminderHour() > 23
+                || secret.getReminderMinute() < 0 || secret.getReminderMinute() > 59) {
+            throw new JSONException("Invalid reminder time");
+        }
+        if (secret.getSuccessCount() < 0 || secret.getFailCount() < 0) {
+            throw new JSONException("Invalid counters");
+        }
     }
 }

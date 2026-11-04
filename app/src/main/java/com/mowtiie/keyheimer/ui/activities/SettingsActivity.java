@@ -419,9 +419,7 @@ public class SettingsActivity extends KeyheimerActivity {
                     }
 
                     List<Secret> imported = BackupManager.importFromJson(in);
-                    for (Secret secret : imported) {
-                        secretDao.insert(secret);
-                    }
+                    secretDao.insertAll(imported);
                     AppExecutors.getInstance().mainThread(() -> {
                         for (Secret secret : imported) {
                             if (secret.isActive()) {
