@@ -20,6 +20,8 @@ public final class PreferenceKeys {
     public static final String KEY_BACKUP_EXPORT = "pref_export";
     public static final String KEY_BACKUP_IMPORT = "pref_import";
     public static final String KEY_EXACT_ALARM_PROMPT_DISMISSED = "exact_alarm_prompt_dismissed";
+    public static final String KEY_LOCK_FAILED_ATTEMPTS = "lock_failed_attempts";
+    public static final String KEY_LOCK_BLOCKED_UNTIL = "lock_blocked_until";
 
     public static final String THEME_MODE_LIGHT = "light";
     public static final String THEME_MODE_DARK = "dark";

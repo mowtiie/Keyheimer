@@ -66,6 +66,10 @@
     <string name="field_error_password_length">Enter at least 6 characters</string>
     <string name="field_error_password_mismatch">Passwords don\'t match</string>
     <string name="field_error_lock_password">Incorrect password</string>
+    <plurals name="field_error_lock_wait">
+        <item quantity="one">Too many attempts. Try again in %d second</item>
+        <item quantity="other">Too many attempts. Try again in %d seconds</item>
+    </plurals>
 
     <string name="crash_action_copy">Copy to clipboard</string>
     <string name="crash_action_export">Export to file</string>

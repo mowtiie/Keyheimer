@@ -2,6 +2,7 @@ package com.mowtiie.keyheimer.ui.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import java.util.Base64;
 import android.view.View;
@@ -29,6 +30,7 @@ public class LockActivity extends KeyheimerActivity {
     private ActivityLockBinding binding;
     private boolean hasPassword;
     private boolean biometricAvailable;
+    private CountDownTimer blockTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,11 @@ public class LockActivity extends KeyheimerActivity {
 
         setUpEdgeToEdgeInsets();
         setUpBackPressedHandling();
+
+        long blockedMillis = lockManager.blockedRemainingMillis(this);
+        if (hasPassword && blockedMillis > 0) {
+            startBlockCountdown(blockedMillis);
+        }
 
         if (biometricAvailable) {
             showBiometricPrompt();
@@ -82,6 +89,11 @@ public class LockActivity extends KeyheimerActivity {
     }
 
     private void attemptPasswordUnlock() {
+        long blockedMillis = AppLockManager.getInstance().blockedRemainingMillis(this);
+        if (blockedMillis > 0) {
+            startBlockCountdown(blockedMillis);
+            return;
+        }
         char[] password = charsOf(binding.inputPassword.getText());
         binding.buttonUnlockPassword.setEnabled(false);
         AppExecutors.getInstance().diskIO().execute(() -> {
@@ -98,11 +110,52 @@ public class LockActivity extends KeyheimerActivity {
                 if (matches) {
                     unlock();
                 } else {
-                    binding.tilPassword.setError(getString(R.string.field_error_lock_password));
                     binding.inputPassword.setText(null);
+                    AppLockManager lockManager = AppLockManager.getInstance();
+                    lockManager.recordFailedAttempt(this);
+                    long remaining = lockManager.blockedRemainingMillis(this);
+                    if (remaining > 0) {
+                        startBlockCountdown(remaining);
+                    } else {
+                        binding.tilPassword.setError(getString(R.string.field_error_lock_password));
+                    }
                 }
             });
         });
+    }
+
+    private void startBlockCountdown(long remainingMillis) {
+        if (blockTimer != null) {
+            blockTimer.cancel();
+        }
+        binding.buttonUnlockPassword.setEnabled(false);
+        showBlockedMessage(remainingMillis);
+        blockTimer = new CountDownTimer(remainingMillis, 1000L) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                showBlockedMessage(millisUntilFinished);
+            }
+
+            @Override
+            public void onFinish() {
+                binding.tilPassword.setError(null);
+                binding.buttonUnlockPassword.setEnabled(true);
+            }
+        }.start();
+    }
+
+    private void showBlockedMessage(long remainingMillis) {
+        int seconds = (int) Math.max(1L, (remainingMillis + 999L) / 1000L);
+        binding.tilPassword.setError(getResources().getQuantityString(
+                R.plurals.field_error_lock_wait, seconds, seconds));
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (blockTimer != null) {
+            blockTimer.cancel();
+        }
+        super.onDestroy();
     }
 
     private boolean verifyPassword(char[] password) {
@@ -118,6 +171,7 @@ public class LockActivity extends KeyheimerActivity {
     }
 
     private void unlock() {
+        AppLockManager.getInstance().clearFailedAttempts(this);
         AppLockManager.getInstance().markUnlocked();
         finish();
     }

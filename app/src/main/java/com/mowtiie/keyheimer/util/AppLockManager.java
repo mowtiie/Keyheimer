@@ -10,6 +10,11 @@ import java.util.Base64;
 
 public final class AppLockManager {
 
+    private static final int FREE_ATTEMPTS = 4;
+    private static final int MAX_DELAY_SHIFT = 5;
+    private static final long BASE_DELAY_MILLIS = 30_000L;
+    private static final long MAX_DELAY_MILLIS = 15 * 60_000L;
+
     private static volatile AppLockManager instance;
 
     // 0 means "never unlocked this process" (i.e. locked).
@@ -66,6 +71,39 @@ public final class AppLockManager {
 
     public boolean isBiometricEnabled(Context context) {
         return prefs(context).getBoolean(PreferenceKeys.KEY_BIOMETRIC_ENABLED, false);
+    }
+
+    static long delayForFailures(int failures) {
+        if (failures <= FREE_ATTEMPTS) {
+            return 0L;
+        }
+        int shift = Math.min(failures - FREE_ATTEMPTS - 1, MAX_DELAY_SHIFT);
+        return Math.min(BASE_DELAY_MILLIS << shift, MAX_DELAY_MILLIS);
+    }
+
+    public long blockedRemainingMillis(Context context) {
+        long blockedUntil = prefs(context).getLong(PreferenceKeys.KEY_LOCK_BLOCKED_UNTIL, 0L);
+        long remaining = blockedUntil - System.currentTimeMillis();
+        return Math.max(0L, Math.min(remaining, MAX_DELAY_MILLIS));
+    }
+
+    public void recordFailedAttempt(Context context) {
+        SharedPreferences prefs = prefs(context);
+        int failures = prefs.getInt(PreferenceKeys.KEY_LOCK_FAILED_ATTEMPTS, 0) + 1;
+        long delay = delayForFailures(failures);
+        SharedPreferences.Editor editor = prefs.edit()
+                .putInt(PreferenceKeys.KEY_LOCK_FAILED_ATTEMPTS, failures);
+        if (delay > 0) {
+            editor.putLong(PreferenceKeys.KEY_LOCK_BLOCKED_UNTIL, System.currentTimeMillis() + delay);
+        }
+        editor.apply();
+    }
+
+    public void clearFailedAttempts(Context context) {
+        prefs(context).edit()
+                .remove(PreferenceKeys.KEY_LOCK_FAILED_ATTEMPTS)
+                .remove(PreferenceKeys.KEY_LOCK_BLOCKED_UNTIL)
+                .apply();
     }
 
     public void setPassword(Context context, char[] password) {
