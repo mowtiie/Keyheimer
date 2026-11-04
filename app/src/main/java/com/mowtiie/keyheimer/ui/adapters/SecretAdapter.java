@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mowtiie.keyheimer.R;
@@ -34,9 +35,40 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
     }
 
     public void submitList(List<Secret> newSecrets) {
+        List<Secret> oldSecrets = new ArrayList<>(secrets);
+        DiffUtil.DiffResult diff = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return oldSecrets.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newSecrets.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldPosition, int newPosition) {
+                return oldSecrets.get(oldPosition).getId().equals(newSecrets.get(newPosition).getId());
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldPosition, int newPosition) {
+                Secret a = oldSecrets.get(oldPosition);
+                Secret b = newSecrets.get(newPosition);
+                return a.getUpdatedAt() == b.getUpdatedAt()
+                        && a.getNextTriggerAt() == b.getNextTriggerAt()
+                        && a.getSuccessCount() == b.getSuccessCount()
+                        && a.getFailCount() == b.getFailCount()
+                        && a.isActive() == b.isActive()
+                        && a.getName().equals(b.getName())
+                        && a.getIntervalValue() == b.getIntervalValue()
+                        && a.getIntervalUnit() == b.getIntervalUnit();
+            }
+        });
         secrets.clear();
         secrets.addAll(newSecrets);
-        notifyDataSetChanged();
+        diff.dispatchUpdatesTo(this);
     }
 
     public Secret getSecretAt(int position) {
