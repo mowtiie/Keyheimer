@@ -234,8 +234,13 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint(getString(R.string.menu_item_search_hint));
+        if (!currentQuery.isEmpty()) {
+            searchItem.expandActionView();
+            searchView.setQuery(currentQuery, false);
+        }
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
