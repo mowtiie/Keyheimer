@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +31,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -389,10 +389,11 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
         });
     }
 
-    private int resolveThemeColor(int attrResId) {
-        TypedValue typedValue = new TypedValue();
-        getTheme().resolveAttribute(attrResId, typedValue, true);
-        return typedValue.data;
+    private Drawable tintedIcon(int drawableRes, int color) {
+        Drawable base = ContextCompat.getDrawable(this, drawableRes);
+        Drawable icon = DrawableCompat.wrap(base.mutate());
+        DrawableCompat.setTint(icon, color);
+        return icon;
     }
 
     private final class SwipeCallback extends ItemTouchHelper.SimpleCallback {
@@ -406,15 +407,18 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
 
         SwipeCallback() {
             super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-            deleteBackground = new ColorDrawable(resolveThemeColor(getColor(R.color.md_theme_error)));
-            toggleBackground = new ColorDrawable(resolveThemeColor(getColor(R.color.md_theme_primary)));
+            deleteBackground = new ColorDrawable(MaterialColors.getColor(
+                    MainActivity.this, androidx.appcompat.R.attr.colorError, Color.RED));
+            toggleBackground = new ColorDrawable(MaterialColors.getColor(
+                    MainActivity.this, androidx.appcompat.R.attr.colorPrimary, Color.DKGRAY));
+            int onError = MaterialColors.getColor(
+                    MainActivity.this, com.google.android.material.R.attr.colorOnError, Color.WHITE);
+            int onPrimary = MaterialColors.getColor(
+                    MainActivity.this, com.google.android.material.R.attr.colorOnPrimary, Color.WHITE);
 
-            Drawable baseDeleteIcon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_delete);
-            deleteIcon = DrawableCompat.wrap(baseDeleteIcon.mutate());
-            DrawableCompat.setTint(deleteIcon, Color.WHITE);
-
-            pauseIcon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_pause);
-            playIcon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_play_arrow);
+            deleteIcon = tintedIcon(R.drawable.ic_delete, onError);
+            pauseIcon = tintedIcon(R.drawable.ic_pause, onPrimary);
+            playIcon = tintedIcon(R.drawable.ic_play_arrow, onPrimary);
             iconMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
         }
 
