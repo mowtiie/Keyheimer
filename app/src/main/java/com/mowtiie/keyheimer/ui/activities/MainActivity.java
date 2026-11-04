@@ -384,9 +384,11 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
                     secret.getReminderHour(), secret.getReminderMinute()));
         }
         AppExecutors.getInstance().diskIO().execute(() -> {
-            dao.restore(secret);
+            boolean restored = dao.restore(secret);
             AppExecutors.getInstance().mainThread(() -> {
-                if (secret.isActive()) {
+                if (!restored) {
+                    Toast.makeText(this, R.string.toast_secret_save_failed, Toast.LENGTH_SHORT).show();
+                } else if (secret.isActive()) {
                     ReminderScheduler.scheduleReminder(this, secret);
                 }
                 loadSecrets();

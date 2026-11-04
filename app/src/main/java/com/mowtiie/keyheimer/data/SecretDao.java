@@ -20,12 +20,12 @@ public class SecretDao {
         this.dbHelper = SecretDbHelper.getInstance(context);
     }
 
-    public void insert(Secret secret) {
+    public boolean insert(Secret secret) {
         long now = System.currentTimeMillis();
         secret.setCreatedAt(now);
         secret.setUpdatedAt(now);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.insert(TABLE_NAME, null, toContentValues(secret));
+        return db.insert(TABLE_NAME, null, toContentValues(secret)) != -1L;
     }
 
     public void insertAll(List<Secret> secrets) {
@@ -44,15 +44,15 @@ public class SecretDao {
         }
     }
 
-    public void update(Secret secret) {
+    public boolean update(Secret secret) {
         secret.setUpdatedAt(System.currentTimeMillis());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.update(
+        return db.update(
                 TABLE_NAME,
                 toContentValues(secret),
                 COLUMN_ID + " = ?",
                 new String[]{secret.getId()}
-        );
+        ) > 0;
     }
 
     public List<Secret> repairIntervals() {
@@ -146,9 +146,9 @@ public class SecretDao {
         db.update(TABLE_NAME, values, COLUMN_ID + " = ?", new String[]{id});
     }
 
-    public void restore(Secret secret) {
+    public boolean restore(Secret secret) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.insertOrThrow(TABLE_NAME, null, toContentValues(secret));
+        return db.insert(TABLE_NAME, null, toContentValues(secret)) != -1L;
     }
 
     public void activate(String id, long nextTriggerAt) {

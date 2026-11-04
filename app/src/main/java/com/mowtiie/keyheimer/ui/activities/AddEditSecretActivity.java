@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
@@ -280,12 +281,13 @@ public class AddEditSecretActivity extends KeyheimerActivity {
                 secret.setHash(HashUtil.hash(passphrase, salt, iterations));
                 Arrays.fill(passphrase, '\0');
             }
-            if (editMode) {
-                dao.update(secret);
-            } else {
-                dao.insert(secret);
-            }
+            boolean saved = editMode ? dao.update(secret) : dao.insert(secret);
             AppExecutors.getInstance().mainThread(() -> {
+                if (!saved) {
+                    saving = false;
+                    Toast.makeText(this, R.string.toast_secret_save_failed, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (secret.isActive()) {
                     ReminderScheduler.scheduleReminder(this, secret);
                 } else {

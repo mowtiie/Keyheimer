@@ -122,6 +122,7 @@
     <string name="toast_crash_copy_success">Crash report copied to clipboard</string>
     <string name="toast_crash_save_success">Crash report saved</string>
     <string name="toast_crash_save_failure">Couldn\'t save the crash report</string>
+    <string name="toast_secret_save_failed">Couldn\'t save the secret</string>
 
     <string name="toast_export_successful">Export successful</string>
     <string name="toast_export_failed">Export failed</string>
