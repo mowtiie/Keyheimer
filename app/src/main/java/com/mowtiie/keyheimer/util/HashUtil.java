@@ -16,7 +16,7 @@ public final class HashUtil {
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
     private static final int SALT_LENGTH_BYTES = 16;
     private static final int KEY_LENGTH_BITS = 256;
-    public static final int DEFAULT_ITERATIONS = 210_000;
+    public static final int DEFAULT_ITERATIONS = 600_000;
 
     private HashUtil() {
     }
