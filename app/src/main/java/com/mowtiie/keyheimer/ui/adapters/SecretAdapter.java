@@ -29,6 +29,7 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
 
     private final Listener listener;
     private final List<Secret> secrets = new ArrayList<>();
+    private long lastSubmitMinute;
 
     public SecretAdapter(Listener listener) {
         this.listener = listener;
@@ -36,6 +37,9 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
 
     public void submitList(List<Secret> newSecrets) {
         List<Secret> oldSecrets = new ArrayList<>(secrets);
+        long currentMinute = System.currentTimeMillis() / DateUtils.MINUTE_IN_MILLIS;
+        boolean sameMinute = currentMinute == lastSubmitMinute;
+        lastSubmitMinute = currentMinute;
         DiffUtil.DiffResult diff = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             @Override
             public int getOldListSize() {
@@ -56,7 +60,8 @@ public class SecretAdapter extends RecyclerView.Adapter<SecretAdapter.SecretView
             public boolean areContentsTheSame(int oldPosition, int newPosition) {
                 Secret a = oldSecrets.get(oldPosition);
                 Secret b = newSecrets.get(newPosition);
-                return a.getUpdatedAt() == b.getUpdatedAt()
+                return sameMinute
+                        && a.getUpdatedAt() == b.getUpdatedAt()
                         && a.getNextTriggerAt() == b.getNextTriggerAt()
                         && a.getSuccessCount() == b.getSuccessCount()
                         && a.getFailCount() == b.getFailCount()
