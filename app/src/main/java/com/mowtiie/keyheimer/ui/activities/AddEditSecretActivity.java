@@ -26,6 +26,7 @@ import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.IntervalConverter;
+import com.mowtiie.keyheimer.util.SecurityScreenUtil;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -274,13 +275,12 @@ public class AddEditSecretActivity extends KeyheimerActivity {
     }
 
     private void confirmDelete() {
-        new MaterialAlertDialogBuilder(this)
+        SecurityScreenUtil.show(this, new MaterialAlertDialogBuilder(this)
                 .setIcon(R.drawable.ic_delete)
                 .setTitle(getString(R.string.dialog_title_delete_secret, existingSecret.getName()))
                 .setMessage(R.string.dialog_message_delete_secret)
                 .setPositiveButton(R.string.dialog_button_delete, (dialog, which) -> deleteSecret())
-                .setNegativeButton(R.string.dialog_button_cancel, null)
-                .show();
+                .setNegativeButton(R.string.dialog_button_cancel, null));
     }
 
     private void deleteSecret() {

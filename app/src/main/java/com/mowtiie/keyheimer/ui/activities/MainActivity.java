@@ -45,6 +45,7 @@ import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.AppLockManager;
 import com.mowtiie.keyheimer.util.IntervalConverter;
+import com.mowtiie.keyheimer.util.SecurityScreenUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +128,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || ReminderScheduler.canScheduleExactAlarms(this)) {
             return;
         }
-        new MaterialAlertDialogBuilder(this)
+        SecurityScreenUtil.show(this, new MaterialAlertDialogBuilder(this)
                 .setIcon(R.drawable.ic_alarm)
                 .setTitle(R.string.dialog_title_request_alarm_permission)
                 .setMessage(R.string.dialog_message_request_alarm_permission)
@@ -136,8 +137,7 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
                     intent.setData(Uri.parse("package:" + getPackageName()));
                     startActivity(intent);
                 })
-                .setNegativeButton(R.string.dialog_button_dismiss, null)
-                .show();
+                .setNegativeButton(R.string.dialog_button_dismiss, null));
     }
 
     private void setUpEdgeToEdgeInsets() {

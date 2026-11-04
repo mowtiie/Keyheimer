@@ -42,6 +42,7 @@ import com.mowtiie.keyheimer.util.AppLockManager;
 import com.mowtiie.keyheimer.util.BackupManager;
 import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
+import com.mowtiie.keyheimer.util.SecurityScreenUtil;
 import com.mowtiie.keyheimer.util.ThemeUtil;
 
 import java.io.IOException;
@@ -112,7 +113,9 @@ public class SettingsActivity extends KeyheimerActivity {
         // SharedPreferences only keeps a weak reference to registered listeners.
         private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener =
                 (sharedPreferences, key) -> {
-                    if (PreferenceKeys.KEY_THEME_MODE.equals(key)) {
+                    if (PreferenceKeys.KEY_SECURITY_SCREEN.equals(key)) {
+                        SecurityScreenUtil.apply(requireActivity().getWindow(), requireContext());
+                    } else if (PreferenceKeys.KEY_THEME_MODE.equals(key)) {
                         ThemeUtil.applyNightMode(sharedPreferences);
                     } else if (PreferenceKeys.KEY_THEME_CONTRAST.equals(key)
                             || PreferenceKeys.KEY_DYNAMIC_COLOR.equals(key)) {
@@ -241,7 +244,7 @@ public class SettingsActivity extends KeyheimerActivity {
                 });
             }
 
-            AlertDialog dialog = builder.show();
+            AlertDialog dialog = SecurityScreenUtil.show(requireContext(), builder);
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                 char[] password = charsOf(passwordInput.getText());
                 char[] confirmPassword = charsOf(confirmInput.getText());

@@ -107,6 +107,9 @@ public class CrashReporter {
             });
         });
 
+        if (dialog.getWindow() != null) {
+            SecurityScreenUtil.apply(dialog.getWindow(), activity);
+        }
         dialog.show();
     }
 

@@ -38,6 +38,7 @@ public abstract class KeyheimerActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        SecurityScreenUtil.apply(getWindow(), this);
         if (AppLockManager.getInstance().isLockRequired(this)) {
             startActivity(new Intent(this, LockActivity.class));
         }

@@ -8,8 +8,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -19,13 +17,14 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mowtiie.keyheimer.R;
 import com.mowtiie.keyheimer.databinding.ActivityAboutBinding;
+import com.mowtiie.keyheimer.util.SecurityScreenUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends KeyheimerActivity {
 
     private ActivityAboutBinding binding;
 
@@ -102,8 +101,7 @@ public class AboutActivity extends AppCompatActivity {
                     .setMessage(readLicenseFromAssets())
                     .setPositiveButton(R.string.dialog_button_close, null);
 
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            SecurityScreenUtil.show(requireContext(), builder);
         }
 
         private String readLicenseFromAssets() {
