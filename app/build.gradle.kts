@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.preference)
     testImplementation(libs.junit)
+    testImplementation(libs.json)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
 }
