@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!-- Launcher icons are referenced through the appIcon/appRoundIcon manifest placeholders, which lint cannot follow. -->
+    <issue id="UnusedResources">
+        <ignore path="**/mipmap-*/ic_launcher*.webp" />
+        <ignore path="**/drawable/ic_launcher_*.xml" />
+        <ignore path="**/values/ic_launcher_background.xml" />
+        <!-- Part of the generated Material colour palette. -->
+        <ignore regexp="md_theme_scrim" />
+    </issue>
+
+    <!-- The adaptive icon XML references the foreground bitmap on purpose. -->
+    <issue id="IconXmlAndPng">
+        <ignore path="**/mipmap-*/ic_launcher*.webp" />
+        <ignore path="**/drawable-*/ic_notification_keyheimer.png" />
+    </issue>
+
+    <!-- The root receives the system-bar insets as padding, so the inner centred container is needed. -->
+    <issue id="UselessParent">
+        <ignore path="**/layout/activity_lock.xml" />
+    </issue>
+</lint>
