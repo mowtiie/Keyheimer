@@ -2,6 +2,7 @@ package com.mowtiie.keyheimer.ui.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,6 +28,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +47,7 @@ import com.mowtiie.keyheimer.ui.dialogs.VerifySecretBottomSheet;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.AppLockManager;
 import com.mowtiie.keyheimer.util.IntervalConverter;
+import com.mowtiie.keyheimer.util.PreferenceKeys;
 import com.mowtiie.keyheimer.util.SecurityScreenUtil;
 
 import java.util.ArrayList;
@@ -125,9 +128,12 @@ public class MainActivity extends KeyheimerActivity implements SecretAdapter.Lis
     }
 
     private void requestExactAlarmPermissionIfNeeded() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || ReminderScheduler.canScheduleExactAlarms(this)) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || ReminderScheduler.canScheduleExactAlarms(this)
+                || prefs.getBoolean(PreferenceKeys.KEY_EXACT_ALARM_PROMPT_DISMISSED, false)) {
             return;
         }
+        prefs.edit().putBoolean(PreferenceKeys.KEY_EXACT_ALARM_PROMPT_DISMISSED, true).apply();
         SecurityScreenUtil.show(this, new MaterialAlertDialogBuilder(this)
                 .setIcon(R.drawable.ic_alarm)
                 .setTitle(R.string.dialog_title_request_alarm_permission)
