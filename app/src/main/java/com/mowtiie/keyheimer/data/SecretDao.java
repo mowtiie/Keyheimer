@@ -151,6 +151,13 @@ public class SecretDao {
         return db.insert(TABLE_NAME, null, toContentValues(secret)) != -1L;
     }
 
+    public void updateNextTrigger(String id, long nextTriggerAt) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NEXT_TRIGGER_AT, nextTriggerAt);
+        db.update(TABLE_NAME, values, COLUMN_ID + " = ?", new String[]{id});
+    }
+
     public void activate(String id, long nextTriggerAt) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();

@@ -9,6 +9,7 @@ import com.mowtiie.keyheimer.data.Secret;
 import org.junit.Test;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class IntervalConverterTest {
 
@@ -95,6 +96,50 @@ public class IntervalConverterTest {
             assertTrue(IntervalConverter.isValidInterval(1, unit));
             assertTrue(IntervalConverter.isValidInterval(max, unit));
             assertFalse(IntervalConverter.isValidInterval(max + 1, unit));
+        }
+    }
+
+    @Test
+    public void computeNextAfterFire_keepsTheScheduleWhenTheAlarmFiresLate() {
+        long scheduled = at(2026, Calendar.MARCH, 10, 9, 0, 0);
+        long firedAfterMidnight = at(2026, Calendar.MARCH, 11, 0, 30, 0);
+
+        Calendar result = calendarOf(IntervalConverter.computeNextAfterFire(
+                scheduled, firedAfterMidnight, 3, Secret.IntervalUnit.DAY, 9, 0));
+
+        assertEquals(13, result.get(Calendar.DAY_OF_MONTH));
+        assertEquals(9, result.get(Calendar.HOUR_OF_DAY));
+    }
+
+    @Test
+    public void computeNextAfterFire_fallsBackToNowWhenTheDeviceWasOffForLong() {
+        long scheduled = at(2026, Calendar.MARCH, 10, 9, 0, 0);
+        long now = at(2026, Calendar.APRIL, 20, 12, 0, 0);
+
+        long result = IntervalConverter.computeNextAfterFire(
+                scheduled, now, 3, Secret.IntervalUnit.DAY, 9, 0);
+
+        assertTrue(result > now);
+        assertEquals(IntervalConverter.computeNextTriggerFrom(now, 3, Secret.IntervalUnit.DAY, 9, 0), result);
+    }
+
+    @Test
+    public void alignToReminderTime_keepsTheIntendedDayAcrossTimeZones() {
+        TimeZone original = TimeZone.getDefault();
+        try {
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+            long trigger = at(2026, Calendar.MARCH, 13, 9, 0, 0);
+
+            for (String zone : new String[]{"Pacific/Honolulu", "Australia/Brisbane"}) {
+                TimeZone.setDefault(TimeZone.getTimeZone(zone));
+                Calendar aligned = calendarOf(IntervalConverter.alignToReminderTime(trigger, 9, 0));
+
+                assertEquals(zone, 13, aligned.get(Calendar.DAY_OF_MONTH));
+                assertEquals(zone, 9, aligned.get(Calendar.HOUR_OF_DAY));
+                assertEquals(zone, 0, aligned.get(Calendar.MINUTE));
+            }
+        } finally {
+            TimeZone.setDefault(original);
         }
     }
 

@@ -18,6 +18,35 @@ public final class IntervalConverter {
                 reminderHour, reminderMinute);
     }
 
+    public static long computeNextAfterFire(long scheduledMillis, long nowMillis, int intervalValue,
+                                            Secret.IntervalUnit unit, int reminderHour, int reminderMinute) {
+        long fromSchedule = computeNextTriggerFrom(scheduledMillis, intervalValue, unit, reminderHour, reminderMinute);
+        if (fromSchedule > nowMillis) {
+            return fromSchedule;
+        }
+        return computeNextTriggerFrom(nowMillis, intervalValue, unit, reminderHour, reminderMinute);
+    }
+
+    public static long alignToReminderTime(long triggerMillis, int reminderHour, int reminderMinute) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(triggerMillis);
+        calendar.set(Calendar.HOUR_OF_DAY, reminderHour);
+        calendar.set(Calendar.MINUTE, reminderMinute);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+
+        long best = calendar.getTimeInMillis();
+        for (int day = 0; day < 2; day++) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            long candidate = calendar.getTimeInMillis();
+            if (Math.abs(candidate - triggerMillis) < Math.abs(best - triggerMillis)) {
+                best = candidate;
+            }
+        }
+        return best;
+    }
+
     public static int maxIntervalValue(Secret.IntervalUnit unit) {
         switch (unit) {
             case DAY:

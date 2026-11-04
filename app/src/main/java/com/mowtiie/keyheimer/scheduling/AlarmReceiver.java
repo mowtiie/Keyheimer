@@ -28,7 +28,10 @@ public class AlarmReceiver extends BroadcastReceiver {
                     return;
                 }
 
-                long nextTriggerAt = IntervalConverter.computeNextTriggerAt(secret.getIntervalValue(), secret.getIntervalUnit(), secret.getReminderHour(), secret.getReminderMinute());
+                long nextTriggerAt = IntervalConverter.computeNextAfterFire(
+                        secret.getNextTriggerAt(), System.currentTimeMillis(),
+                        secret.getIntervalValue(), secret.getIntervalUnit(),
+                        secret.getReminderHour(), secret.getReminderMinute());
                 secret.setNextTriggerAt(nextTriggerAt);
                 dao.update(secret);
 
