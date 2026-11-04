@@ -1,5 +1,6 @@
 package com.mowtiie.keyheimer.ui.dialogs;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -115,8 +116,10 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void handleResult(boolean matched) {
-        binding.buttonVerify.setEnabled(true);
-        triggerHapticFeedback(matched);
+        if (binding != null) {
+            binding.buttonVerify.setEnabled(true);
+            triggerHapticFeedback(matched);
+        }
         if (matched) {
             onVerifySuccess();
         } else {
@@ -134,13 +137,14 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
                 secret.getIntervalValue(), secret.getIntervalUnit(),
                 secret.getReminderHour(), secret.getReminderMinute());
         String secretId = secret.getId();
+        Context appContext = requireContext().getApplicationContext();
 
         AppExecutors.getInstance().diskIO().execute(() -> {
             dao.updateVerificationResult(secretId, true, nextTriggerAt);
             Secret updated = dao.getById(secretId);
             AppExecutors.getInstance().mainThread(() -> {
                 if (updated != null && updated.isActive()) {
-                    ReminderScheduler.scheduleReminder(requireContext(), updated);
+                    ReminderScheduler.scheduleReminder(appContext, updated);
                 }
                 showSuccessState();
             });
@@ -148,6 +152,9 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void showSuccessState() {
+        if (binding == null) {
+            return;
+        }
         binding.groupInput.setVisibility(View.GONE);
         binding.groupSuccess.setVisibility(View.VISIBLE);
         autoCloseHandler.postDelayed(autoCloseRunnable, SUCCESS_AUTO_CLOSE_DELAY_MS);
@@ -155,12 +162,17 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
 
     private void onVerifyFailure() {
         failureCount++;
+        String secretId = secret.getId();
+        long nextTriggerAt = secret.getNextTriggerAt();
+        AppExecutors.getInstance().diskIO().execute(() ->
+                dao.updateVerificationResult(secretId, false, nextTriggerAt));
+
+        if (binding == null) {
+            return;
+        }
         binding.inputPassphrase.setText(null);
         binding.tilPassphrase.setError(getString(R.string.field_error_verify_passphrase));
         binding.inputPassphrase.requestFocus();
-
-        AppExecutors.getInstance().diskIO().execute(() ->
-                dao.updateVerificationResult(secret.getId(), false, secret.getNextTriggerAt()));
 
         if (failureCount >= FAILURES_BEFORE_RESET_OPTION) {
             binding.buttonResetPassphrase.setVisibility(View.VISIBLE);
