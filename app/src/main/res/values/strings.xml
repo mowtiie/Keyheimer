@@ -168,6 +168,7 @@
     <string name="preference_support_title">Support the developer</string>
     <string name="preference_support_summary">If you enjoy using Keyheimer, you can support its development</string>
     <string name="preference_category_about">About</string>
+    <string name="preference_about_title">About Keyheimer</string>
     <string name="preference_app_version">Version</string>
     <string name="preference_app_license">License</string>
     <string name="preference_app_source_code_title">Source Code</string>

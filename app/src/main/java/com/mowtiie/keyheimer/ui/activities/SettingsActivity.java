@@ -134,7 +134,19 @@ public class SettingsActivity extends KeyheimerActivity {
             setUpNotificationPreference();
             setUpExactAlarmPreference();
             setUpBackupPreferences();
+            setUpAboutPreference();
             updateLockTimeoutEnabled();
+        }
+
+        private void setUpAboutPreference() {
+            Preference preference = findPreference(PreferenceKeys.KEY_ABOUT);
+            if (preference == null) {
+                return;
+            }
+            preference.setOnPreferenceClickListener(clicked -> {
+                startActivity(new Intent(requireContext(), AboutActivity.class));
+                return true;
+            });
         }
 
         @Override

@@ -19,6 +19,7 @@ public final class PreferenceKeys {
     public static final String KEY_NOTIFICATIONS = "pref_notifications";
     public static final String KEY_BACKUP_EXPORT = "pref_export";
     public static final String KEY_BACKUP_IMPORT = "pref_import";
+    public static final String KEY_ABOUT = "pref_about";
     public static final String KEY_EXACT_ALARM_PROMPT_DISMISSED = "exact_alarm_prompt_dismissed";
     public static final String KEY_LOCK_FAILED_ATTEMPTS = "lock_failed_attempts";
     public static final String KEY_LOCK_BLOCKED_UNTIL = "lock_blocked_until";

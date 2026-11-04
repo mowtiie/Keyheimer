@@ -101,4 +101,14 @@
             app:iconSpaceReserved="false"
             android:title="@string/preference_notification_title" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/preference_category_about"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="pref_about"
+            app:iconSpaceReserved="false"
+            android:title="@string/preference_about_title" />
+    </PreferenceCategory>
 </PreferenceScreen>
