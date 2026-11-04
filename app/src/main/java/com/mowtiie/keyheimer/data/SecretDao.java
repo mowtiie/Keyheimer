@@ -117,6 +117,15 @@ public class SecretDao {
         db.update(TABLE_NAME, values, COLUMN_ID + " = ?", new String[]{id});
     }
 
+    public void updateCredentials(String id, byte[] salt, String hash, int iterations) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_SALT, salt);
+        values.put(COLUMN_HASH, hash);
+        values.put(COLUMN_ITERATIONS, iterations);
+        db.update(TABLE_NAME, values, COLUMN_ID + " = ?", new String[]{id});
+    }
+
     public void restore(Secret secret) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.insertOrThrow(TABLE_NAME, null, toContentValues(secret));

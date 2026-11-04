@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import androidx.biometric.BiometricManager;
 import androidx.preference.PreferenceManager;
 
+import java.util.Base64;
+
 public final class AppLockManager {
 
     private static volatile AppLockManager instance;
@@ -64,6 +66,25 @@ public final class AppLockManager {
 
     public boolean isBiometricEnabled(Context context) {
         return prefs(context).getBoolean(PreferenceKeys.KEY_BIOMETRIC_ENABLED, false);
+    }
+
+    public void setPassword(Context context, char[] password) {
+        byte[] salt = HashUtil.generateSalt();
+        int iterations = HashUtil.DEFAULT_ITERATIONS;
+        String hash = HashUtil.hash(password, salt, iterations);
+        prefs(context).edit()
+                .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, hash)
+                .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_SALT, Base64.getEncoder().encodeToString(salt))
+                .putInt(PreferenceKeys.KEY_APP_LOCK_PASSWORD_ITERATIONS, iterations)
+                .apply();
+    }
+
+    public void upgradePasswordHashIfNeeded(Context context, char[] verifiedPassword) {
+        int iterations = prefs(context).getInt(
+                PreferenceKeys.KEY_APP_LOCK_PASSWORD_ITERATIONS, HashUtil.DEFAULT_ITERATIONS);
+        if (iterations < HashUtil.DEFAULT_ITERATIONS) {
+            setPassword(context, verifiedPassword);
+        }
     }
 
     public void markUnlocked() {

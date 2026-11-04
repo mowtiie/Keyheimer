@@ -108,8 +108,18 @@ public class VerifySecretBottomSheet extends BottomSheetDialogFragment {
         binding.tilPassphrase.setError(null);
         binding.buttonVerify.setEnabled(false);
 
+        String secretId = secret.getId();
+        byte[] salt = secret.getSalt();
+        int iterations = secret.getIterations();
+        String storedHash = secret.getHash();
+
         AppExecutors.getInstance().diskIO().execute(() -> {
-            boolean matched = HashUtil.verify(attempt, secret.getSalt(), secret.getIterations(), secret.getHash());
+            boolean matched = HashUtil.verify(attempt, salt, iterations, storedHash);
+            if (matched && iterations < HashUtil.DEFAULT_ITERATIONS) {
+                byte[] newSalt = HashUtil.generateSalt();
+                String newHash = HashUtil.hash(attempt, newSalt, HashUtil.DEFAULT_ITERATIONS);
+                dao.updateCredentials(secretId, newSalt, newHash, HashUtil.DEFAULT_ITERATIONS);
+            }
             Arrays.fill(attempt, '\0');
             AppExecutors.getInstance().mainThread(() -> handleResult(matched));
         });

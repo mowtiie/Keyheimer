@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
-import java.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -40,7 +39,6 @@ import com.mowtiie.keyheimer.scheduling.ReminderScheduler;
 import com.mowtiie.keyheimer.util.AppExecutors;
 import com.mowtiie.keyheimer.util.AppLockManager;
 import com.mowtiie.keyheimer.util.BackupManager;
-import com.mowtiie.keyheimer.util.HashUtil;
 import com.mowtiie.keyheimer.util.PreferenceKeys;
 import com.mowtiie.keyheimer.util.SecurityScreenUtil;
 import com.mowtiie.keyheimer.util.ThemeUtil;
@@ -248,7 +246,7 @@ public class SettingsActivity extends KeyheimerActivity {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                 char[] password = charsOf(passwordInput.getText());
                 char[] confirmPassword = charsOf(confirmInput.getText());
-                SharedPreferences sharedPrefs = prefs();
+                Context appContext = requireContext().getApplicationContext();
 
                 if (password.length < 6) {
                     passwordInput.setError(getString(R.string.field_error_password_length));
@@ -265,7 +263,7 @@ public class SettingsActivity extends KeyheimerActivity {
                 Arrays.fill(confirmPassword, '\0');
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 AppExecutors.getInstance().diskIO().execute(() -> {
-                    savePassword(sharedPrefs, password);
+                    AppLockManager.getInstance().setPassword(appContext, password);
                     Arrays.fill(password, '\0');
                     AppExecutors.getInstance().mainThread(() -> {
                         dialog.dismiss();
@@ -356,17 +354,6 @@ public class SettingsActivity extends KeyheimerActivity {
 
         private String currentPasswordHash() {
             return prefs().getString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, "");
-        }
-
-        private void savePassword(SharedPreferences prefs, char[] password) {
-            byte[] salt = HashUtil.generateSalt();
-            int iterations = HashUtil.DEFAULT_ITERATIONS;
-            String hash = HashUtil.hash(password, salt, iterations);
-            prefs.edit()
-                    .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_HASH, hash)
-                    .putString(PreferenceKeys.KEY_APP_LOCK_PASSWORD_SALT, Base64.getEncoder().encodeToString(salt))
-                    .putInt(PreferenceKeys.KEY_APP_LOCK_PASSWORD_ITERATIONS, iterations)
-                    .apply();
         }
 
         private void clearPassword() {

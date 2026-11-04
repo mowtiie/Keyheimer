@@ -86,6 +86,9 @@ public class LockActivity extends KeyheimerActivity {
         binding.buttonUnlockPassword.setEnabled(false);
         AppExecutors.getInstance().diskIO().execute(() -> {
             boolean matches = verifyPassword(password);
+            if (matches) {
+                AppLockManager.getInstance().upgradePasswordHashIfNeeded(getApplicationContext(), password);
+            }
             Arrays.fill(password, '\0');
             AppExecutors.getInstance().mainThread(() -> {
                 if (isDestroyed()) {
