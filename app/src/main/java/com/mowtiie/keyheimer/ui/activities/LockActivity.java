@@ -166,8 +166,12 @@ public class LockActivity extends KeyheimerActivity {
         if (storedHash.isEmpty() || saltEncoded.isEmpty()) {
             return false;
         }
-        byte[] salt = Base64.getDecoder().decode(saltEncoded);
-        return HashUtil.verify(password, salt, iterations, storedHash);
+        try {
+            byte[] salt = Base64.getDecoder().decode(saltEncoded);
+            return HashUtil.verify(password, salt, iterations, storedHash);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private void unlock() {

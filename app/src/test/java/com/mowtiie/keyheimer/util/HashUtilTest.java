@@ -39,6 +39,17 @@ public class HashUtilTest {
     }
 
     @Test
+    public void verify_returnsFalseForCorruptStoredValues() {
+        byte[] salt = HashUtil.generateSalt();
+        char[] attempt = "anything".toCharArray();
+
+        assertFalse(HashUtil.verify(attempt, salt, TEST_ITERATIONS, "not base64 !!"));
+        assertFalse(HashUtil.verify(attempt, salt, TEST_ITERATIONS, ""));
+        assertFalse(HashUtil.verify(attempt, new byte[0], TEST_ITERATIONS, "AAAA"));
+        assertFalse(HashUtil.verify(attempt, salt, 0, "AAAA"));
+    }
+
+    @Test
     public void hash_differsBetweenSalts() {
         char[] passphrase = "same passphrase".toCharArray();
 

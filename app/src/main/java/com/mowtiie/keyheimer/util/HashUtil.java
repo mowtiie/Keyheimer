@@ -43,9 +43,16 @@ public final class HashUtil {
     }
 
     public static boolean verify(char[] attempt, byte[] salt, int iterations, String storedHash) {
-        String attemptHash = hash(attempt, salt, iterations);
-        byte[] a = Base64.getDecoder().decode(attemptHash);
-        byte[] b = Base64.getDecoder().decode(storedHash);
+        byte[] b;
+        try {
+            b = Base64.getDecoder().decode(storedHash);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        if (salt == null || salt.length == 0 || iterations <= 0) {
+            return false;
+        }
+        byte[] a = Base64.getDecoder().decode(hash(attempt, salt, iterations));
         boolean result = MessageDigest.isEqual(a, b);
         Arrays.fill(a, (byte) 0);
         Arrays.fill(b, (byte) 0);
